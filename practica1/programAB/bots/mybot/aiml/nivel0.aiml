@@ -53,78 +53,78 @@
    <!-- Pregunta 8 - Te desplazarias de manera ocasional a otros lugares -->
 
    <category>
-      <pattern></pattern>
-      <template></template>
+      <pattern>* despla+ [lugar+ sitio+]</pattern>
+      <template>Si, tengo coche y carnet de conducir</template>
    </category>
 
    <!-- Pregunta 9 - Te consideras una persona creativa -->
 
    <category>
       <pattern>^ [consider+ eres] ^ [alguien persona] [creativ+ imaginativ+] </pattern>
-      <template></template>
+      <template>No, no soy creativo</template>
    </category>
 
    <!-- Pregunta 10 - Que expectativas tienes de este trabajo -->
 
    <category>
       <pattern>^ [expectativas esper+] ^ <set>sinonimos_trabajo</set></pattern>
-      <template></template>
+      <template>Muchas.</template>
    </category>
 
    <!-- Pregunta 11 - Que trabajos has tenido en esta tematica -->
 
    <category>
       <pattern>^ <set>sinonimos_trabajo</set> ^ [tema+] ^ </pattern>
-      <template></template>
+      <template>Soy nuevo en el sector, no he trabajado mucho.</template>
    </category>
 
    <!-- Pregunta 12 - Normalmente te llevas el trabajo a casa -->
 
    <category>
-      <pattern>^ </pattern>
-      <template></template>
+      <pattern> [llevas llevarias harias haces] ^ [casa]</pattern>
+      <template>Depende, si es estrictamente necesario, pues algo habra que hacer</template>
    </category>
 
    <!-- Pregunta 13 - Cuales son tus aspiraciones salariales -->
 
    <category>
       <pattern></pattern>
-      <template></template>
+      <template>No tengo muchas aspiraciones, la verdad, ni salariales ni en la vida</template>
    </category>
 
    <!-- Pregunta 14 - Donde te ves dentro de cinco años -->
 
    <category>
-      <pattern></pattern>
-      <template></template>
+      <pattern>[donde como] te ves ^ [cinco 5] [anios anos] </pattern>
+      <template>Muerto.</template>
    </category>
 
    <!-- Pregunta 15 - No tienes experiencia para el puesto a desempeñar -->
 
    <category>
-      <pattern></pattern>
-      <template></template>
+      <pattern>^ no ^ [experiencia capacitado preparado] ^ <set>sinonimos_trabajo</set></pattern>
+      <template>Yo creo que si seria capaz de realizar el trabajo</template>
    </category>
 
    <!-- Pregunta 16 - Que sabes de la empresa y el puesto de trabajo -->
 
    <category>
-      <pattern></pattern>
-      <template></template>
+      <pattern>^ [sabes conoces] ^ [empresa] ^</pattern>
+      <template>Pues no mucho, ya que sois una empresa nueva.</template>
    </category>
 
    <!-- Pregunta 17 - Que haces cuando consideras que tu jefe no tiene la razon -->
 
    <category>
       <pattern> ^ [haces harias] ^ <set>sinonimos_superior</set> ^ no [tiene lleva] razon ^ </pattern>
-      <template></template>
+      <template>Decirselo</template>
    </category>
 
    <!-- Pregunta 18 - Por que deberiamos escogerte a ti -->
 
    <category>
       <pattern>^ [debemos deberiamos tendriamos] ^ [escogerte seleccionarte contratarte] ^</pattern>
-      <template></template>
+      <template>Porque soy la unica persona que acepta este sueldo</template>
    </category>
 
 
