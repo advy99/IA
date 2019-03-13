@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+
+   <!-- Pregunta 1 - Hablame un poco de ti -->
+
+   <category>
+      <pattern><set>sinonimos_hablar</set> * ti</pattern>
+      <template>Soy un bot programado en AIML para la asignatura de IA, impartida en el segundo cuatrimestre del segundo curso en el grado de Ingenieria Informatica por el departamento DECSAI</template>
+   </category>
+
+   <!-- Pregunta 2 - Cual es tu mayor defecto -->
+
+   <category>
+      <pattern>* defecto ^</pattern>
+      <template>Me gusta mas trabajar de manera individual que en equipo</template>
+   </category>
+
+   <!-- Pregunta 3 - Que aspectos no te gustan de un jefe -->
+
+   <category>
+      <pattern>* no * <set>sinonimos_gustar</set> * <set>sinonimos_superior</set> ^</pattern>
+      <template>En mi experiencia profesional he trabajado con diferentes tipos de jefes y utilizando diferentes metodologías de trabajo, pero creo que soy una persona que me adapto bien a cualquier metodología de trabajo</template>
+   </category>
+
+   <!-- Pregunta 4 - Cuales son tus 3 mayores virtudes -->
+
+   <category>
+      <pattern>^ [3 tres] ^ virtudes</pattern>
+      <template>Me interesa aprender nuevas tecnologias, siempre soy puntual y siempre suelo estar disponible</template>
+   </category>
+
+   <!-- Pregunta 5 - Te consideras preparado para desempañar las funciones de este pueso -->
+
+   <category>
+      <pattern>^ preparado ^ <set>sinonimos_trabajo</set> </pattern>
+      <template>Si</template>
+   </category>
+
+   <!-- Pregunta 6 - Tienes experiencia en la realizacion de proyectos en equipos de trabajo -->
+
+   <category>
+      <pattern>^ experiencia * <set>sinonimos_trabajo</set></pattern>
+      <template>Si, aunque considero que trabajo mejor de forma individual</template>
+   </category>
+
+   <!-- Pregunta 7 - Realizarias un trabajo que no fuera con tu especialidad -->
+
+   <category>
+      <pattern> ^ <set>sinonimos_realizar</set> * <set>sinonimos_trabajo</set> ^ especialidad ^ </pattern>
+      <template>Si, considero que durante mi carrera he sido capaz de adaptarme a distintos trabajos</template>
+   </category>
+
+   <!-- Pregunta 8 - Te desplazarias de manera ocasional a otros lugares -->
+
+   <category>
+      <pattern></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 9 - Te consideras una persona creativa -->
+
+   <category>
+      <pattern>^ [consider+ eres] ^ [alguien persona] [creativ+ imaginativ+] </pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 10 - Que expectativas tienes de este trabajo -->
+
+   <category>
+      <pattern>^ [expectativas esper+] ^ <set>sinonimos_trabajo</set></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 11 - Que trabajos has tenido en esta tematica -->
+
+   <category>
+      <pattern>^ <set>sinonimos_trabajo</set> ^ [tema+] ^ </pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 12 - Normalmente te llevas el trabajo a casa -->
+
+   <category>
+      <pattern>^ </pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 13 - Cuales son tus aspiraciones salariales -->
+
+   <category>
+      <pattern></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 14 - Donde te ves dentro de cinco años -->
+
+   <category>
+      <pattern></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 15 - No tienes experiencia para el puesto a desempeñar -->
+
+   <category>
+      <pattern></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 16 - Que sabes de la empresa y el puesto de trabajo -->
+
+   <category>
+      <pattern></pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 17 - Que haces cuando consideras que tu jefe no tiene la razon -->
+
+   <category>
+      <pattern> ^ [haces harias] ^ <set>sinonimos_superior</set> ^ no [tiene lleva] razon ^ </pattern>
+      <template></template>
+   </category>
+
+   <!-- Pregunta 18 - Por que deberiamos escogerte a ti -->
+
+   <category>
+      <pattern>^ [debemos deberiamos tendriamos] ^ [escogerte seleccionarte contratarte] ^</pattern>
+      <template></template>
+   </category>
+
+
+</aiml>
