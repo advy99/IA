@@ -2,8 +2,9 @@
 <aiml version="2.0">
 
 
+
    <category>
-      <pattern>[introduce aniade] (la serie) * a (la plataforma) (amazon) * </pattern>
+      <pattern>[introduce aniade] (la serie) <set>series</set> a (la plataforma) (amazon) * </pattern>
       <template>
 
          <addtoset>
@@ -11,16 +12,9 @@
             <key><star/></key>
          </addtoset>
 
-         <!-- Creamos el map donde estara la serie -->
-         <system>touch bots/mybot/maps/<star/>.txt</system>
-         <!-- Recargamos los archivos de aiml - actualmente no funciona, hay que reiniciar manualmente el bot -->
-         <learn>./bots/mybot/aiml/*.aiml</learn>
-         <learn>./bots/mybot/maps/<star/>.txt</learn>
-
          <!-- Almacenamos en variables globales la serie y plataforma, para preguntar sobre estas -->
          <think> <set name="serie"><star/></set> </think>
          <think> <set name="plataforma"><star index="2"/></set> </think>
-         <think> <set name="topic">addgenero</set> </think>
 
          <!-- Añadimos serie y plataforma al fichero de la serie -->
          <addtomap>
@@ -34,12 +28,161 @@
             <value><get name="plataforma"/></value>
          </addtomap>
 
-         Se ha introducido la serie <star/>, se deberia haber creado el fichero bots/mybot/maps/<star/>.txt. De no ser asi, genere el fichero manualmente, por favor.
-
          Dime el genero de la serie <star/>.
 
       </template>
    </category>
+
+   <category>
+      <pattern>[introduce aniade] (la serie) * a (la plataforma) (amazon) * </pattern>
+      <template>
+
+         <!-- Creamos el map donde estara la serie -->
+         <system>touch bots/mybot/maps/<star/>.txt</system>
+         <addtoset>
+            <name>series</name>
+            <key><star/></key>
+         </addtoset>
+
+         Reinicia el bot y vuelve a pedir introducir la serie <star/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>[introduce aniade] (la serie) <set>series</set> </pattern>
+      <template>
+         <think> <set name="serie"><star/></set> </think>
+         Dime a que plataforma pertenece
+      </template>
+   </category>
+
+   <category>
+      <pattern>[introduce aniade] (la serie) * </pattern>
+      <template>
+         <system>touch bots/mybot/maps/<star/>.txt</system>
+         <addtoset>
+            <name>series</name>
+            <key><star/></key>
+         </addtoset>
+         Reinicia el bot y vuelve a pedir introducir la serie <star/>
+
+      </template>
+   </category>
+
+   <category>
+      <pattern>(amazon) *</pattern>
+      <that>Dime a que plataforma pertenece</that>
+      <template>
+         <srai>aniade la serie <get name="serie"/> a <star/></srai>
+      </template>
+   </category>
+
+
+   <category>
+      <pattern><set>generos</set></pattern>
+      <that>Dime el genero de la serie *</that>
+      <template>
+         <think> <set name="topic">addatributo</set>
+         <srai>ADDATRIBUTO <star/> A genero </srai> </think>
+         De que va la serie
+      </template>
+
+   </category>
+
+   <category>
+      <pattern>*</pattern>
+      <that>De que va la serie</that>
+      <template>
+         <think> <set name="topic">addatributo</set>
+         <srai>ADDATRIBUTO <srai>CODE <star/></srai> A descripcion </srai></think>
+         Dime la lista de idiomas en los que esta disponible el audio de la serie
+      </template>
+
+   </category>
+
+   <category>
+      <pattern>*</pattern>
+      <that>Dime la lista de idiomas en los que esta disponible el audio de la serie</that>
+      <template>
+         <think>
+            <set var="contador">0</set>
+            <set var="tope"><srai>COUNT <star/></srai></set>
+            <set var="lista"><star/></set>
+            <condition var="contador">
+               <li><value><get var="tope"/></value></li>
+               <li>
+                  <set name="topic">addatributo</set>
+                  <srai>TOP <get var="lista"/></srai>
+                  <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A idiomas </srai>
+                  <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <loop/>
+               </li>
+
+            </condition>
+         </think>
+         Dime la lista de idiomas en los que esta disponible los subtitulos de la serie
+      </template>
+
+   </category>
+
+   <category>
+      <pattern>*</pattern>
+      <that>Dime la lista de idiomas en los que esta disponible los subtitulos de la serie</that>
+      <template>
+         <think>
+            <set var="contador">0</set>
+            <set var="tope"><srai>COUNT <star/></srai></set>
+            <set var="lista"><star/></set>
+
+            <condition var="contador">
+               <li><value><get var="tope"/></value></li>
+               <li>
+                  <set name="topic">addatributo</set>
+                  <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A subtitulos </srai>
+                  <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <loop/>
+               </li>
+
+            </condition>
+         </think>
+         Si conoces la web de la serie dimela
+      </template>
+
+   </category>
+
+   <category>
+      <pattern>^ no ^</pattern>
+      <that>Si conoces la web de la serie dimela</that>
+      <template>
+         Ya he creado la informacion basica, si quieres aniadir capitulos me lo dices
+      </template>
+
+   </category>
+
+   <category>
+      <pattern> (la [direccion web]) (es) *</pattern>
+      <that>Si conoces la web de la serie dimela</that>
+      <template>
+         <think>
+            <srai>ADDATRIBUTO <star/> A web </srai>
+         </think>
+         Ya he creado la informacion basica, si quieres aniadir capitulos me lo dices
+      </template>
+
+   </category>
+
+   <category>
+      <pattern>^ no ^</pattern>
+      <that>Ya he creado la informacion basica, si quieres aniadir capitulos me lo dices</that>
+      <template>
+         Perfecto
+      </template>
+
+   </category>
+
+
 
 
    <topic name="addatributo">
@@ -88,7 +231,7 @@
    </topic>
 
    <category>
-      <pattern>[aniade incluye] el genero <set>generos</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] el genero <set>generos</set> a (la serie) <set>series</set> ^ </pattern>
       <template>
          <think> <set name="serie"><star index="2"/></set> </think>
          <think> <set name="topic">addatributo</set> </think>
@@ -97,7 +240,7 @@
    </category>
 
    <category>
-      <pattern>[aniade incluye] el genero * a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] el genero * a (la serie) <set>series</set> ^ </pattern>
       <template>
          No se reconoce el genero a aniadir
       </template>
@@ -113,7 +256,7 @@
 
 
    <category>
-      <pattern>[aniade incluye] el idioma <set>idiomas</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] el idioma <set>idiomas</set> a (la serie) <set>series</set> ^ </pattern>
       <template>
          <think> <set name="serie"><star index="2"/></set> </think>
          <think> <set name="topic">addatributo</set> </think>
@@ -122,7 +265,7 @@
    </category>
 
    <category>
-      <pattern>[aniade incluye] el idioma * a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] el idioma * a (la serie) <set>series</set> ^ </pattern>
       <template>
          No se reconoce el idioma a aniadir
       </template>
@@ -137,7 +280,7 @@
    </category>
 
    <category>
-      <pattern>[aniade incluye] los subtitulos (de) <set>idiomas</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] los subtitulos (de) <set>idiomas</set> a (la serie) <set>series</set> ^ </pattern>
       <template>
          <think> <set name="serie"><star index="2"/></set> </think>
          <think> <set name="topic">addatributo</set> </think>
@@ -146,7 +289,7 @@
    </category>
 
    <category>
-      <pattern>[aniade incluye] los subtitulos (de) * a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <pattern>[aniade incluye] los subtitulos (de) * a (la serie) <set>series</set> ^ </pattern>
       <template>
          No se reconoce el idioma a aniadir
       </template>
@@ -164,7 +307,7 @@
 
 
    <category>
-      <pattern>(la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] [habla trata cuenta] [de sobre] * </pattern>
+      <pattern>(la serie) <set>series</set> [habla trata cuenta] [de sobre] * </pattern>
       <template>
          <think> <set name="serie"><star/></set> </think>
          <think> <set name="topic">addatributo</set> </think>
@@ -182,7 +325,7 @@
 
 
    <category>
-      <pattern>la (pagina) web de (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] es * </pattern>
+      <pattern>la (pagina) web de (la serie) <set>series</set> es * </pattern>
       <template>
          <think> <set name="serie"><star/></set> </think>
          <think> <set name="topic">addatributo</set> </think>
@@ -198,13 +341,30 @@
       </template>
    </category>
 
-
+   <category>
+      <pattern>si * (amazon) [netflix PrimeVideo]</pattern>
+      <that>De que plataforma es la serie</that>
+      <template>
+         <srai>aniade la serie <get name="serie"/> a la plataforma <star/> </srai>
+      </template>
+   </category>
 
    <category>
       <pattern>si</pattern>
       <that>La serie * no esta disponible, quieres aniadirla</that>
       <template>
          De que plataforma es la serie
+      </template>
+   </category>
+
+
+
+
+   <category>
+      <pattern>no</pattern>
+      <that>La serie * no esta disponible, quieres aniadirla</that>
+      <template>
+         De acuerdo, no aniadire la serie <star/>
       </template>
    </category>
 
@@ -227,18 +387,25 @@
 
    <category>
       <pattern>[sobre de] que [trata habla] (la serie) *</pattern>
-      <template>de que va la serie <star/></template>
+      <template><srai>de que va la serie <star/></srai></template>
    </category>
 
 
 
    <category>
-      <pattern> De que va (la serie) * </pattern>
+      <pattern> De que va (la serie) <set>series</set> </pattern>
       <template>
-         <srai>decode <map><name><star/></name>sinopsis</map></srai>
+         <srai>decode<map><name><star/></name>descripcion</map></srai>
       </template>
    </category>
 
+   <category>
+      <pattern> De que va (la serie) * </pattern>
+      <template>
+         <think> <set name="serie"><star/></set> </think>
+         La serie <star/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
 
 
 

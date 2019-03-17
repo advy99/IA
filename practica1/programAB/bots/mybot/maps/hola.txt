@@ -1,0 +1,6 @@
+serie:hola
+plataforma:netflix
+genero:drama
+descripcion:gente
+idiomas:ingles@espanol@frances
+subtitulos:ingles@ruso@chino
