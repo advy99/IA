@@ -4,3 +4,5 @@ genero:drama
 descripcion:gente
 idiomas:ingles@espanol@frances
 subtitulos:ingles@ruso@chino
+temporada1:primer_capitulo@12@cap_2@23
+temporada2:res@23
