@@ -1,4 +1,5 @@
 trabajo
+trabajos
 puesto
 tarea
 proyecto

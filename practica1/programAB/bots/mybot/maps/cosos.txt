@@ -1,0 +1,3 @@
+serie:cosos
+plataforma:netflix
+genero:drama@ficcion

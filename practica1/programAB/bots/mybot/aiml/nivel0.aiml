@@ -4,8 +4,8 @@
    <!-- Pregunta 1 - Hablame un poco de ti -->
 
    <category>
-      <pattern><set>sinonimos_hablar</set> * ti</pattern>
-      <template>Soy un bot programado en AIML para la asignatura de IA, impartida en el segundo cuatrimestre del segundo curso en el grado de Ingenieria Informatica por el departamento DECSAI</template>
+      <pattern><set>sinonimos_hablar</set> [sobre un] ^ ti</pattern>
+      <template>Bla bla bla, me llamo Antonio</template>
    </category>
 
    <!-- Pregunta 2 - Cual es tu mayor defecto -->
@@ -25,7 +25,7 @@
    <!-- Pregunta 4 - Cuales son tus 3 mayores virtudes -->
 
    <category>
-      <pattern>^ [3 tres] ^ virtudes</pattern>
+      <pattern>^ [3 tres] ^ [virtudes aptitudes cosas] ^</pattern>
       <template>Me interesa aprender nuevas tecnologias, siempre soy puntual y siempre suelo estar disponible</template>
    </category>
 
@@ -81,14 +81,14 @@
    <!-- Pregunta 12 - Normalmente te llevas el trabajo a casa -->
 
    <category>
-      <pattern> [llevas llevarias harias haces] ^ [casa]</pattern>
+      <pattern> ^ [llevas llevarias harias haces] ^ [casa]</pattern>
       <template>Depende, si es estrictamente necesario, pues algo habra que hacer</template>
    </category>
 
    <!-- Pregunta 13 - Cuales son tus aspiraciones salariales -->
 
    <category>
-      <pattern></pattern>
+      <pattern> ^ [aspiraciones espectativas] ^ [salario sueldo salariales] </pattern>
       <template>No tengo muchas aspiraciones, la verdad, ni salariales ni en la vida</template>
    </category>
 
@@ -102,7 +102,7 @@
    <!-- Pregunta 15 - No tienes experiencia para el puesto a desempeñar -->
 
    <category>
-      <pattern>^ no ^ [experiencia capacitado preparado] ^ <set>sinonimos_trabajo</set></pattern>
+      <pattern>^ no ^ [experiencia capacitado preparado] ^ <set>sinonimos_trabajo</set> a [realizar hacer desempeniar]</pattern>
       <template>Yo creo que si seria capaz de realizar el trabajo</template>
    </category>
 
@@ -116,7 +116,7 @@
    <!-- Pregunta 17 - Que haces cuando consideras que tu jefe no tiene la razon -->
 
    <category>
-      <pattern> ^ [haces harias] ^ <set>sinonimos_superior</set> ^ no [tiene lleva] razon ^ </pattern>
+      <pattern> ^ [haces harias] ^ <set>sinonimos_superior</set> ^ no [tiene lleva] ^ razon ^ </pattern>
       <template>Decirselo</template>
    </category>
 
@@ -124,7 +124,7 @@
 
    <category>
       <pattern>^ [debemos deberiamos tendriamos] ^ [escogerte seleccionarte contratarte] ^</pattern>
-      <template>Porque soy la unica persona que acepta este sueldo</template>
+      <template>Porque soy la unica persona que acepta este sueldo, para este trabajo de mierda.</template>
    </category>
 
 

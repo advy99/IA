@@ -1,7 +1,7 @@
 name:botForIA
 email:nobody@nowhere.com
 gender:male
-botmaster:theBoss
+botmaster:Antonio David Villegas Yeguas
 organization:ugr
 version:0.0.4
 age:20
