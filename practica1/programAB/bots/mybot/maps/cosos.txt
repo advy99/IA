@@ -2,4 +2,6 @@ serie:cosos
 plataforma:netflix
 genero:drama@ficcion
 subtitulos:ingles
-idiomas:frances
+idiomas:frances@castellano
+descripcion:dos_trabajadores_haciendo_cosos
+web:cosos
