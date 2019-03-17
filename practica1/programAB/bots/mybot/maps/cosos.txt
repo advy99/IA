@@ -1,3 +1,5 @@
 serie:cosos
 plataforma:netflix
 genero:drama@ficcion
+subtitulos:ingles
+idiomas:frances

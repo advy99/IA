@@ -41,56 +41,58 @@
       </template>
    </category>
 
-   <topic name="addgenero">
+
+   <topic name="addatributo">
       <category>
-         <pattern><set>generos</set></pattern>
+         <pattern>ADDATRIBUTO * A *</pattern>
          <template>
-
             <think>
-               <set var="genero"> <map><name><get name="serie"/></name>Genero</map> </set>
-               <set var="nuevo_genero"><star/></set>
+               <set var="atributo"> <map><name><get name="serie"/></name><star index="2"/></map> </set>
+               <set var="nuevo_atributo"><star/></set>
 
-               <condition var="genero">
+               <condition var="atributo">
                   <li value="unknown">
                      <addtomap>
                         <name><get name="serie"/></name>
-                        <key>genero</key>
-                        <value><get var="nuevo_genero"/></value>
+                        <key><star index="2"/></key>
+                        <value><get var="nuevo_atributo"/></value>
                      </addtomap>
                      <set var="mensaje">Aniadido</set>
                   </li>
 
                   <li>
                      <set var="mensaje">Ese genero ya esta asignado</set>
-                     <set var="esta"><srai>FINDITEM <get var="nuevo_genero"/> IN <srai>DECODELIST <get var="genero"/></srai></srai></set>
+                     <set var="esta"><srai>FINDITEM <get var="nuevo_atributo"/> IN <srai>DECODELIST <get var="atributo"/></srai></srai></set>
 
                      <condition var="esta">
                         <li value="0">
                            <modifymap>
                               <name><get name="serie"/></name>
-                              <key>genero</key>
-                              <value><get var="genero"/>@<get var="nuevo_genero"/></value>
+                              <key><star index="2"/></key>
+                              <value><get var="atributo"/>@<get var="nuevo_atributo"/></value>
                            </modifymap>
-                           <set var="mensaje">Aniadido</set>
+                           <set var="mensaje">Anadido</set>
                         </li>
                      </condition>
                   </li>
 
                </condition>
-
+               <set name="topic"></set>
             </think>
             <get var="mensaje"/>
-
          </template>
 
       </category>
+
+
    </topic>
 
    <category>
       <pattern>[aniade incluye] el genero <set>generos</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
       <template>
-         <think> <set name="topic">addgenero</set> </think>
-         <srai><star/></srai>
+         <think> <set name="serie"><star index="2"/></set> </think>
+         <think> <set name="topic">addatributo</set> </think>
+         <srai>ADDATRIBUTO <star/> A genero </srai>
       </template>
    </category>
 
@@ -107,10 +109,61 @@
       </template>
    </category>
 
+
+
+   <category>
+      <pattern>[aniade incluye] el idioma <set>idiomas</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <template>
+         <think> <set name="serie"><star index="2"/></set> </think>
+         <think> <set name="topic">addatributo</set> </think>
+         <srai>ADDATRIBUTO <star/> A idiomas</srai>
+      </template>
+   </category>
+
+   <category>
+      <pattern>[aniade incluye] el idioma * a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <template>
+         No se reconoce el idioma a aniadir
+      </template>
+   </category>
+
+   <category>
+      <pattern>[aniade incluye] el idioma <set>idiomas</set> a (la serie) * </pattern>
+      <template>
+         La serie <star index="2"/> no esta disponible
+      </template>
+   </category>
+
+   <category>
+      <pattern>[aniade incluye] los subtitulos (de) <set>idiomas</set> a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <template>
+         <think> <set name="serie"><star index="2"/></set> </think>
+         <think> <set name="topic">addatributo</set> </think>
+         <srai>ADDATRIBUTO <star/> A subtitulos</srai>
+      </template>
+   </category>
+
+   <category>
+      <pattern>[aniade incluye] los subtitulos (de) * a (la serie) [<set>seriesnetflix</set> <set>seriesprimevideo</set> ] ^ </pattern>
+      <template>
+         No se reconoce el idioma a aniadir
+      </template>
+   </category>
+
+   <category>
+      <pattern>[aniade incluye] los subtitulos (de) <set>idiomas</set> a (la serie) * </pattern>
+      <template>
+         La serie <star index="2"/> no esta disponible
+      </template>
+   </category>
+
+
    <category>
       <pattern>[aniade include] un capitulo a (la serie) *</pattern>
       <template></template>
    </category>
+
+
 
 
    <category>
