@@ -25,6 +25,11 @@
             <key>Plataforma</key>
             <value><get name="plataforma"/></value>
          </addtomap>
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>ultimatemporada</key>
+            <value>0</value>
+         </addtomap>
 
          Dime el genero de la serie <star/>.
 
@@ -194,6 +199,44 @@
 
 
    <topic name="addatributo">
+
+      <category>
+         <pattern>ADDATRIBUTO <set>number</set> A *</pattern>
+         <template>
+            <think>
+               <set var="atributo"> <map><name><get name="serie"/></name><star index="2"/></map> </set>
+               <set var="nuevo_atributo"><star/></set>
+
+               <condition var="atributo">
+                  <li value="unknown">
+                     <addtomap>
+                        <name><get name="serie"/></name>
+                        <key><star index="2"/></key>
+                        <value><get var="nuevo_atributo"/></value>
+                     </addtomap>
+                     <set var="mensaje">Aniadido</set>
+                  </li>
+
+                  <li>
+                     <li value="0">
+                        <modifymap>
+                           <name><get name="serie"/></name>
+                           <key><star index="2"/></key>
+                           <value><get var="atributo"/>@<get var="nuevo_atributo"/></value>
+                        </modifymap>
+                        <set var="mensaje">Anadido</set>
+                     </li>
+                  </li>
+
+               </condition>
+               <set name="topic"></set>
+            </think>
+            <get var="mensaje"/>
+         </template>
+
+      </category>
+
+
       <category>
          <pattern>ADDATRIBUTO * A *</pattern>
          <template>
@@ -213,6 +256,7 @@
 
                   <li>
                      <set var="mensaje">Ese atributo ya esta asignado</set>
+
                      <set var="esta"><srai>FINDITEM <get var="nuevo_atributo"/> IN <srai>DECODELIST <get var="atributo"/></srai></srai></set>
 
                      <condition var="esta">
@@ -443,11 +487,57 @@
    <category>
       <pattern> [aniade incluye] un capitulo [a de] la temporada <set>number</set> [de a] (la serie) <set>series</set></pattern>
       <template>
-         <think> <set name="serie"><star index="2"/></set> </think>
-         <think> <set name="temporada">temporada<star/></set> </think>
+         <think>
+            <set name="serie"><star index="2"/></set>
+            <set var="ultimaT"><map><name><get name="serie"/></name>ultimatemporada</map></set>
+            <set var="contador">0</set>
+            <set var="ntemp"><map name="successor"><get var="ultimaT"/></map></set>
+            <set var="mensaje">Dime el titulo del capitulo</set>
+
+            <condition var="contador">
+               <li>
+                  <value><get var="ntemp"/></value>
+                  <set name="temporada"><get var="ntemp"/></set>
+                  <set var="mensaje">La temporada <star/> no existe la ultima temporada es la <get var="ultimaT"/> creo la temporada <get var="ntemp"/></set>
+               </li>
+               <li><value><star/></value>
+                  <set name="temporada">temporada<star/></set>
+                  <set var="mensaje">Dime el titulo del capitulo</set>
+               </li>
+               <li>
+                  <set var="contador">
+                     <map name="successor"><get var="contador"/></map>
+                  </set>
+                  <loop/>
+               </li>
+            </condition>
+         </think>
+         <get var="mensaje"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>si</pattern>
+      <that>La temporada <set>number</set> no existe la ultima temporada es la <set>number</set> creo la temporada <set>number</set></that>
+      <template>
+         <think>
+            <modifymap>
+               <name><get name="serie"/></name>
+               <key>ultimatemporada</key>
+               <value><get name="temporada"/></value>
+            </modifymap>
+            <set name="temporada">temporada<get name="temporada"/></set>
+         </think>
          Dime el titulo del capitulo
       </template>
    </category>
+
+   <category>
+      <pattern>no</pattern>
+      <that>La temporada <set>number</set> no existe la ultima temporada es la <set>number</set> creo la temporada <set>number</set></that>
+      <template><think><set name="topic"></set></think>ok</template>
+   </category>
+
 
    <category>
       <pattern>*</pattern>
@@ -486,13 +576,6 @@
       <template>
          <think><set name="serie"><star/></set> </think>
          La serie <star/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
-
-   <category>
-      <pattern> [aniade incluye] un capitulo [a de] la temporada * [de a] (la serie) *</pattern>
-      <template>
-         Dime el numero de la temporada
       </template>
    </category>
 

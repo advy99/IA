@@ -1,0 +1,9 @@
+serie:casa
+plataforma:netflix
+ultimatemporada:2
+genero:accion
+descripcion:gente_en_su_casa
+idiomas:ingles
+subtitulos:espanol
+temporada1:er@23@ter@23
+temporada2:werwf@23
