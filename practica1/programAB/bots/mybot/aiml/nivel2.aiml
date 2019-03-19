@@ -170,13 +170,14 @@
 
 
    <category>
-      <pattern>^ nombre del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) <set>series</set> </pattern>
+      <pattern>^ [nombre titulo] del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) <set>series</set> </pattern>
       <template>
          <think>
             <set var="contador">1</set>
-            <set var="nombre"></set>
+            <set var="nombre">unknown</set>
             <set var="todoscap"><map><name><star index="4"/></name>temporada<star index="3"/></map></set>
             <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+            <set var="mensaje"></set>
 
             <condition var="contador">
                <li><value><star index="2"/></value>
@@ -190,14 +191,23 @@
                </li>
             </condition>
 
+            <condition var="nombre">
+               <li value="$">
+                  <set var="mensaje">No se ha encontrado esa informacion</set>
+               </li>
+               <li>
+                  <set var="mensaje">El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> se llama <get var="nombre"/></set>
+               </li>
+            </condition>
+
          </think>
-         El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> se llama <get var="nombre"/>
+         <get var="mensaje"/>
       </template>
    </category>
 
 
    <category>
-      <pattern>^ nombre del capitulo <set>number</set></pattern>
+      <pattern>^ [nombre titulo] del capitulo <set>number</set></pattern>
       <template><think><set name="ncapitulo"><star index="2"/></set></think> y de que serie</template>
    </category>
 
@@ -222,6 +232,7 @@
             <set var="todoscap"><map><name><star index="4"/></name>temporada<star index="3"/></map></set>
             <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
             <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+            <set var="mensaje"></set>
 
             <condition var="contador">
                <li><value><star index="2"/></value>
@@ -235,8 +246,17 @@
                </li>
             </condition>
 
+            <condition var="duracion">
+               <li value="$">
+                  <set var="mensaje">No se ha encontrado esa informacion</set>
+               </li>
+               <li>
+                  <set var="mensaje">El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> tiene una duracion de <get var="duracion"/></set>
+               </li>
+            </condition>
+
          </think>
-         El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> tiene una duracion de <get var="duracion"/>
+         <get var="mensaje"/>
       </template>
    </category>
 
