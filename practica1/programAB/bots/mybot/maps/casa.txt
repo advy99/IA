@@ -5,5 +5,5 @@ genero:accion
 descripcion:gente_en_su_casa
 idiomas:ingles
 subtitulos:espanol
-temporada1:er@23@ter@23
+temporada1:er@3@ter@23@cap3@32
 temporada2:werwf@23

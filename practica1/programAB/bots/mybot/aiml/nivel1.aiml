@@ -416,7 +416,7 @@
       <pattern>no</pattern>
       <that>La serie * no esta disponible, quieres aniadirla</that>
       <template>
-         De acuerdo, no aniadire la serie <star/>
+         De acuerdo, no aniadire la serie
       </template>
    </category>
 

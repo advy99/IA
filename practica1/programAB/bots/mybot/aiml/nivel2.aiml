@@ -1,4 +1,225 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 
+   <category>
+      <pattern> (dime) En que idiomas esta (disponible) (la serie) <set>series</set> </pattern>
+      <template>
+         <think>
+            <set var="tmp"><map><name><star/></name>idiomas</map></set>
+         </think>
+         La serie <star/> esta disponible en <srai>aniadey <srai>DECODELIST <get var="tmp"/></srai></srai>
+      </template>
+   </category>
+
+
+
+   <category>
+      <pattern> ANIADEY * </pattern>
+      <template>
+         <think>
+            <set var="lista"><star/></set>
+            <set var="tamano"><srai>count <get var="lista"/></srai></set>
+            <set var="solucion"></set>
+
+            <condition var="tamano">
+               <li value="0"></li>
+               <li value="1">
+                  <set var="solucion"><get var="lista"/></set>
+               </li>
+               <li>
+                  <condition var="tamano">
+                     <li value="1">
+                     <set var="solucion"><get var="solucion"/> y <get var="lista"/></set>
+                     </li>
+                     <li>
+                        <set var="palabra"><first><get var="lista"/></first></set>
+                        <set var="lista"><rest><get var="lista"/></rest></set>
+                        <set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+                        <set var="tamano"><map name="predecessor"><get var="tamano"/></map></set>
+                        <loop/>
+                     </li>
+                  </condition>
+               </li>
+            </condition>
+
+         </think>
+         <get var="solucion"/>
+      </template>
+   </category>
+
+
+   <category>
+      <pattern> ^ <set>series</set> esta en <set>idiomas</set> </pattern>
+      <template>
+         <think>
+            <set var="lista"><map><name><star index="2"/></name>idiomas</map></set>
+            <set var="lista"><srai>DECODELIST <get var="lista"/></srai></set>
+            <set var="idioma"><first><get var="lista"/></first></set>
+            <condition var="idioma">
+               <li value="NIL"><set var="solucion">No, no esta en <star index="3"/> </set></li>
+               <li><value><star index="3"/></value>
+                  <set var="solucion">Si, <star index="2"/> esta en <star index="3"/></set>
+               </li>
+               <li>
+                  <set var="lista"><rest><get var="lista"/></rest></set>
+                  <set var="idioma"><first><get var="lista"/></first></set>
+               <loop/>
+               </li>
+            </condition>
+         </think>
+         <get var="solucion"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ subtitulos [tiene estan] disponible+ (la serie) <set>series</set></pattern>
+      <template>
+         La serie <star index="2"/> tiene disponible los siguientes subtitulos <srai>ANIADEY <srai>DECODELIST <map><name><star index="2"/></name>idiomas</map></srai></srai>
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>(dime) (cuantas) (el numero de) temporadas tiene (la serie) <set>series</set></pattern>
+      <template>La serie <star/> tiene disponibles <map><name><star/></name>ultimatemporada</map> temporadas</template>
+   </category>
+
+
+   <category>
+      <pattern>^ idiomas esta (disponible) (la serie) <set>series</set></pattern>
+      <template>La serie <star/> esta disponible en <srai>COUNT <srai>DECODELIST <map><name><star/></name>idiomas</map></srai></srai> idiomas</template>
+   </category>
+
+   <category>
+      <pattern>^ subtitulos [tiene esta] (disponible) (la serie) <set>series</set></pattern>
+      <template>La serie <star/> tiene disponible <srai>COUNT <srai>DECODELIST <map><name><star/></name>subtitulos</map></srai></srai> subtitulos</template>
+   </category>
+
+
+   <category>
+      <pattern>^ capitulos (que tiene) (tiene) (disponible+) la temporada <set>number</set> de (la serie) <set>series</set></pattern>
+      <template>La temporada <star index="2"/> de la serie <star index="3"/> tiene disponible <srai>COUNTHALF <srai>DECODELIST <map><name><star index="3"/></name>temporada<star index="2"/></map></srai></srai> capitulos</template>
+   </category>
+
+   <category>
+      <pattern>^ capitulos ([estan tiene]) (disponible+) (de) (la serie) <set>series</set></pattern>
+      <template>
+         <think>
+            <set var="contador">1</set>
+            <set var="total"></set>
+            <condition var="contador">
+               <li><value><map name="successor"><map><name><star index="2"/></name>ultimatemporada</map></map></value>
+               </li>
+               <li>
+                  <set var="total"><get var="total"/>@<map><name><star index="2"/></name>temporada<get var="contador"/></map></set>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <loop/>
+               </li>
+            </condition>
+         </think>
+         La serie <star index="2"/> tiene disponible <srai>COUNTHALF <srai>DECODELIST <get var="total"/></srai></srai> capitulos
+      </template>
+   </category>
+
+
+
+
+
+   <!-- CUenta la mitad de elementos de una lista, como la temporada tiene dos elementos por capitulo, nos servira para contar capitulos -->
+
+   <category>
+      <pattern>COUNTHALF *</pattern>
+      <template>
+         <think>
+            <set var="count">0</set>
+            <set var="list">
+               <star/>
+            </set>
+            <set var="item">
+               <srai>TOP <get var="list"/></srai>
+            </set>
+         </think>
+         <condition var="item">
+            <li>
+               <value>$</value>
+               <get var="count"/>
+            </li>
+            <li>
+               <think>
+                  <set var="count">
+                     <map>
+                        <name>successor</name>
+                        <get var="count"/>
+                     </map>
+                  </set>
+                  <set var="list">
+                     <srai>REMAIN <get var="list"/></srai>
+                  </set>
+                  <set var="list">
+                     <srai>REMAIN <get var="list"/></srai>
+                  </set>
+                  <set var="item">
+                     <srai>TOP <get var="list"/></srai>
+                  </set>
+               </think>
+               <loop/>
+            </li>
+         </condition>
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ nombre del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) <set>series</set> </pattern>
+      <template>
+         <think>
+            <set var="contador">1</set>
+            <set var="nombre"></set>
+            <set var="todoscap"><map><name><star index="4"/></name>temporada<star index="3"/></map></set>
+            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+            <condition var="contador">
+               <li><value><star index="2"/></value>
+                  <set var="nombre"><srai>TOP <get var="todoscap"/></srai></set>
+               </li>
+               <li>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <loop/>
+               </li>
+            </condition>
+
+         </think>
+         El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> se llama <get var="nombre"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ duracion del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) <set>series</set> </pattern>
+      <template>
+         <think>
+            <set var="contador">1</set>
+            <set var="duracion"></set>
+            <set var="todoscap"><map><name><star index="4"/></name>temporada<star index="3"/></map></set>
+            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+            <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+
+            <condition var="contador">
+               <li><value><star index="2"/></value>
+                  <set var="duracion"><srai>TOP <get var="todoscap"/></srai></set>
+               </li>
+               <li>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <loop/>
+               </li>
+            </condition>
+
+         </think>
+         El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> tiene una duracion de <get var="duracion"/>
+      </template>
+   </category>
+
 </aiml>
