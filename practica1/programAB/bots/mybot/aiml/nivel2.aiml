@@ -2,7 +2,7 @@
 <aiml version="2.0">
 
    <category>
-      <pattern> (dime) En que idiomas esta (disponible) (la serie) <set>series</set> </pattern>
+      <pattern> (dime) En que [idioma+ lenguaje] esta (disponible) (la serie) <set>series</set> </pattern>
       <template>
          <think>
             <set var="tmp"><map><name><star/></name>idiomas</map></set>
@@ -195,6 +195,24 @@
       </template>
    </category>
 
+
+   <category>
+      <pattern>^ nombre del capitulo <set>number</set></pattern>
+      <template><think><set name="ncapitulo"><star index="2"/></set></think> y de que serie</template>
+   </category>
+
+   <category>
+      <pattern><set>series</set></pattern>
+      <that>y de que serie</that>
+      <template><think><set name="serie"><star/></set></think>y de que temporada</template>
+   </category>
+
+   <category>
+      <pattern><set>number</set></pattern>
+      <that>y de que temporada</that>
+      <template><srai>dime el nombre del capitulo <get name="ncapitulo"/> de la temporada <star/> de la serie <get name="serie"/></srai></template>
+   </category>
+
    <category>
       <pattern>^ duracion del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) <set>series</set> </pattern>
       <template>
@@ -221,5 +239,23 @@
          El capitulo <star index="2"/> de la temporada <star index="3"/> de la serie <star index="4"/> tiene una duracion de <get var="duracion"/>
       </template>
    </category>
+
+   <category>
+      <pattern>^ duracion del capitulo <set>number</set></pattern>
+      <template><think><set name="ncapitulo"><star index="2"/></set></think>de que serie</template>
+   </category>
+
+   <category>
+      <pattern><set>series</set></pattern>
+      <that>de que serie</that>
+      <template><think><set name="serie"><star/></set></think>de que temporada</template>
+   </category>
+
+   <category>
+      <pattern><set>number</set></pattern>
+      <that>de que temporada</that>
+      <template><srai>dime la duracion del capitulo <get name="ncapitulo"/> de la temporada <star/> de la serie <get name="serie"/></srai></template>
+   </category>
+
 
 </aiml>
