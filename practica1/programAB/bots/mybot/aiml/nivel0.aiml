@@ -4,7 +4,7 @@
    <!-- Pregunta 1 - Hablame un poco de ti -->
 
    <category>
-      <pattern><set>sinonimos_hablar</set> [sobre un] ^ ti</pattern>
+      <pattern><set>sinonimos_hablar</set> [sobre un de] ^ ti</pattern>
       <template>Bla bla bla, me llamo Antonio</template>
    </category>
 

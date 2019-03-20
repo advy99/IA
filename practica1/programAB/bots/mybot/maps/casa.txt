@@ -1,9 +1,10 @@
 serie:casa
 plataforma:netflix
-ultimatemporada:2
-genero:accion
+ultimatemporada:3
+genero:accion@drama
 descripcion:gente_en_su_casa
-idiomas:ingles
+idiomas:ingles@frances@ruso
 subtitulos:espanol
 temporada1:er@3@ter@23@cap3@32
 temporada2:werwf@23
+temporada3:hola@12
