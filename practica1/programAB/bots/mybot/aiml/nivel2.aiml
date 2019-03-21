@@ -3,6 +3,11 @@
 
 
    <category>
+      <pattern>^ numero de [idiomas lenguajes] disponibles para (la serie) <set>series</set></pattern>
+      <template>La serie <star index="2"/> esta disponible en <srai>COUNT <srai>DECODELIST <map><name><star index="2"/></name>idiomas</map></srai></srai> idiomas</template>
+   </category>
+
+   <category>
       <pattern> ^ [idioma+ lenguaje] ^ (disponible+) (la serie) <set>series</set> </pattern>
       <template>
          <think>
@@ -12,15 +17,7 @@
       </template>
    </category>
 
-   <category>
-      <pattern> ^ [idioma+ lenguaje] ^ (disponible+) (la serie) * </pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="3"/></set> </think>
-         </think>
-         La serie <star index="3"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
+
 
 
    <category>
@@ -82,15 +79,6 @@
    </category>
 
 
-   <category>
-      <pattern> ^ * esta en <set>idiomas</set> </pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="2"/></set> </think>
-         </think>
-         La serie <star index="2"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
 
 
    <category>
@@ -100,15 +88,7 @@
       </template>
    </category>
 
-   <category>
-      <pattern>^ subtitulo+ ^ (disponible+) (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="3"/></set> </think>
-         </think>
-         La serie <star index="3"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
+
 
 
    <category>
@@ -116,45 +96,15 @@
       <template>La serie <star/> tiene disponibles <map><name><star/></name>ultimatemporada</map> temporadas</template>
    </category>
 
-   <category>
-      <pattern>(dime) (cuantas) (el numero de) temporadas tiene (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star/></set> </think>
-         </think>
-         La serie <star/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
 
 
-   <category>
-      <pattern>^ idiomas esta (disponible) (la serie) <set>series</set></pattern>
-      <template>La serie <star/> esta disponible en <srai>COUNT <srai>DECODELIST <map><name><star/></name>idiomas</map></srai></srai> idiomas</template>
-   </category>
 
-   <category>
-      <pattern>^ idiomas esta (disponible) (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="2"/></set> </think>
-         </think>
-         La serie <star index="2"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
+
+
 
    <category>
       <pattern>^ subtitulos [tiene esta] (disponible) (la serie) <set>series</set></pattern>
       <template>La serie <star/> tiene disponible <srai>COUNT <srai>DECODELIST <map><name><star/></name>subtitulos</map></srai></srai> subtitulos</template>
-   </category>
-
-   <category>
-      <pattern>^ subtitulos [tiene esta] (disponible) (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="2"/></set> </think>
-         </think>
-         La serie <star index="2"/> no esta disponible, quieres aniadirla
-      </template>
    </category>
 
 
@@ -164,15 +114,7 @@
       <template>La temporada <star index="2"/> de la serie <star index="3"/> tiene disponible <srai>COUNTHALF <srai>DECODELIST <map><name><star index="3"/></name>temporada<star index="2"/></map></srai></srai> capitulos</template>
    </category>
 
-   <category>
-      <pattern>^ capitulos (que tiene) (tiene) (disponible+) la temporada <set>number</set> de (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="3"/></set> </think>
-         </think>
-         La serie <star index="3"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
+
 
    <category>
       <pattern>^ capitulos ([estan tiene]) (disponible+) (de) (la serie) <set>series</set></pattern>
@@ -194,15 +136,6 @@
       </template>
    </category>
 
-   <category>
-      <pattern>^ capitulos ([estan tiene]) (disponible+) (de) (la serie) *</pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="2"/></set> </think>
-         </think>
-         La serie <star index="2"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
 
 
 
@@ -290,16 +223,6 @@
    </category>
 
 
-   <category>
-      <pattern>^ [nombre titulo] del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) * </pattern>
-      <template>
-         <think>
-            <think> <set name="serie"><star index="4"/></set> </think>
-         </think>
-         La serie <star index="4"/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
-
 
 
    <category>
@@ -313,16 +236,7 @@
       <template><think><set name="serie"><star/></set></think>y de que temporada</template>
    </category>
 
-   <category>
-      <pattern>*</pattern>
-      <that>y de que serie</that>
-      <template>
-         <think>
-            <think> <set name="serie"><star/></set> </think>
-         </think>
-         La serie <star/> no esta disponible, quieres aniadirla
-      </template>
-   </category>
+
 
    <category>
       <pattern><set>number</set></pattern>
@@ -368,14 +282,16 @@
    </category>
 
    <category>
-      <pattern>^ duracion del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) * </pattern>
+      <pattern>*</pattern>
+      <that>y de que serie</that>
       <template>
          <think>
-            <think> <set name="serie"><star index="4"/></set> </think>
+            <think> <set name="serie"><star/></set> </think>
          </think>
-         La serie <star index="4"/> no esta disponible, quieres aniadirla
+         La serie <star/> no esta disponible, quieres aniadirla
       </template>
    </category>
+
 
    <category>
       <pattern>^ duracion del capitulo <set>number</set></pattern>
@@ -405,6 +321,113 @@
       <that>de que temporada</that>
       <template><srai>dime la duracion del capitulo <get name="ncapitulo"/> de la temporada <star/> de la serie <get name="serie"/></srai></template>
    </category>
+
+
+   <category>
+      <pattern> ^ [idioma idiomas lenguaje] ^ (disponible+) [de para] (la serie) * </pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="3"/></set> </think>
+         </think>
+         La serie <star index="3"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ subtitulo+ ^ (disponible+) (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="3"/></set> </think>
+         </think>
+         La serie <star index="3"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ capitulos ([estan tiene]) (disponible+) (de) (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="2"/></set> </think>
+         </think>
+         La serie <star index="2"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ idiomas esta (disponible) (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="2"/></set> </think>
+         </think>
+         La serie <star index="2"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ subtitulos [tiene esta] (disponible) (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="2"/></set> </think>
+         </think>
+         La serie <star index="2"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ capitulos (que tiene) (tiene) (disponible+) la temporada <set>number</set> de (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="3"/></set> </think>
+         </think>
+         La serie <star index="3"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>(dime) (cuantas) (el numero de) temporadas tiene (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star/></set> </think>
+         </think>
+         La serie <star/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+   <category>
+      <pattern> ^ * esta en <set>idiomas</set> </pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="2"/></set> </think>
+         </think>
+         La serie <star index="2"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ [nombre titulo] del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) * </pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="4"/></set> </think>
+         </think>
+         La serie <star index="4"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ duracion del capitulo <set>number</set> de la temporada <set>number</set> de (la serie) * </pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="4"/></set> </think>
+         </think>
+         La serie <star index="4"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
 
 
 </aiml>

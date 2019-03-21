@@ -41,7 +41,7 @@
       <template>
 
          <!-- Creamos el map donde estara la serie -->
-         <system>touch "bots/mybot/maps/<star/>.txt"</system>
+         <system>touch "nbots/mybot/maps/<star/>.txt"</system>
          <addtoset>
             <name>series</name>
             <key><star/></key>

@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 
-   
+   <category>
+      <pattern>^ reproduce (la serie) <set>series</set></pattern>
+      <template>
+         <think><set name="serie"><star index="2"/></set></think>
+         Ok puedes decirme si eres Carlos o Marta
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ reproduce (la serie) *</pattern>
+      <template>
+         <think>
+            <think> <set name="serie"><star index="2"/></set> </think>
+         </think>
+         La serie <star index="2"/> no esta disponible, quieres aniadirla
+      </template>
+   </category>
+
+
+   <category>
+      <pattern>^ carlos</pattern>
+      <that>puedes decirme si eres Carlos o Marta</that>
+      <template>
+         <think>
+
+         </think>
+      </template>
+   </category>
+
+   <category>
+      <pattern>^ marta</pattern>
+      <that>puedes decirme si eres Carlos o Marta</that>
+      <template>
+      </template>
+   </category>
+
+   <category>
+      <pattern>^</pattern>
+      <that>puedes decirme si eres Carlos o Marta</that>
+      <template>
+         Lo siento, no reconozco a ese usuario.
+      </template>
+   </category>
+
 
 </aiml>
