@@ -3,7 +3,7 @@
 
 
    <category>
-      <pattern>^ numero de [idiomas lenguajes] disponibles para (la serie) <set>series</set></pattern>
+      <pattern>^ numero de [idiomas lenguajes] (disponibles) [para de] (la serie) <set>series</set></pattern>
       <template>La serie <star index="2"/> esta disponible en <srai>COUNT <srai>DECODELIST <map><name><star index="2"/></name>idiomas</map></srai></srai> idiomas</template>
    </category>
 
@@ -97,11 +97,6 @@
    </category>
 
 
-
-
-
-
-
    <category>
       <pattern>^ subtitulos [tiene esta] (disponible) (la serie) <set>series</set></pattern>
       <template>La serie <star/> tiene disponible <srai>COUNT <srai>DECODELIST <map><name><star/></name>subtitulos</map></srai></srai> subtitulos</template>
@@ -132,7 +127,7 @@
                </li>
             </condition>
          </think>
-         La serie <star index="2"/> tiene disponible <srai>COUNTHALF <srai>DECODELIST <get var="total"/></srai></srai> capitulos
+         La serie <star index="2"/> tiene disponible <srai>COUNTHALF <srai>DECODELIST <get var="total"/></srai></srai> capitulos, distribuidos en <map><name><star index="2"/></name>ultimatemporada</map> temporadas
       </template>
    </category>
 

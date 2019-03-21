@@ -22,18 +22,73 @@
 
    <category>
       <pattern>^ carlos</pattern>
-      <that>puedes decirme si eres Carlos o Marta</that>
+      <that>ok puedes decirme si eres Carlos o Marta</that>
       <template>
          <think>
+            <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></set>
+            <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></set>
+            <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
+            <set name="duracion_r"></set>
+            <set name="usuario">carlos</set>
 
+            <set var="contador">1</set>
+            <set name="titulo_r">unknown</set>
+            <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+            <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+            <condition var="contador">
+               <li><value><get name="ncap_r"/></value>
+                  <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+               </li>
+               <li>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <loop/>
+               </li>
+            </condition>
          </think>
+         Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/> donde lo dejaste
       </template>
    </category>
 
    <category>
       <pattern>^ marta</pattern>
-      <that>puedes decirme si eres Carlos o Marta</that>
+      <that>ok puedes decirme si eres Carlos o Marta</that>
       <template>
+         <think>
+            <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></set>
+            <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></set>
+            <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></srai></set>
+            <set name="duracion_r"></set>
+            <set name="usuario">marta</set>
+
+            <set var="contador">1</set>
+            <set name="titulo_r">unknown</set>
+            <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+            <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+            <condition var="contador">
+               <li><value><get name="ncap_r"/></value>
+                  <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+               </li>
+               <li>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                  <loop/>
+               </li>
+            </condition>
+         </think>
+         Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/> donde lo dejaste
       </template>
    </category>
 

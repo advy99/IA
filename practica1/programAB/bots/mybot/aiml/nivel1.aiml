@@ -30,6 +30,16 @@
             <key>ultimatemporada</key>
             <value>0</value>
          </addtomap>
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>tcarlos</key>
+            <value>1@1@0</value>
+         </addtomap>
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>tmarta</key>
+            <value>1@1@0</value>
+         </addtomap>
 
          Dime el genero de la serie <star/>.
 
@@ -39,14 +49,14 @@
    <category>
       <pattern>[introduce aniade] (la serie) * a (la plataforma) (amazon) * </pattern>
       <template>
-
-         <!-- Creamos el map donde estara la serie -->
-         <system>touch "nbots/mybot/maps/<star/>.txt"</system>
-         <addtoset>
-            <name>series</name>
-            <key><star/></key>
-         </addtoset>
-
+         <think>
+            <!-- Creamos el map donde estara la serie -->
+            <system>touch bots/mybot/maps/<star/>.txt</system>
+            <addtoset>
+               <name>series</name>
+               <key><star/></key>
+            </addtoset>
+         </think>
          Reinicia el bot y vuelve a pedir introducir la serie <star/>
       </template>
    </category>
