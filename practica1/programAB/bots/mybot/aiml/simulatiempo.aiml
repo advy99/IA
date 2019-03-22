@@ -6,6 +6,8 @@
 
 
 
+
+<topic name="verseries">
 <!-- Hace avanzar el tiempo actual tantos minutos como indica el argumento -->
 <category>
 <pattern> SIMUL <set>number</set> </pattern>
@@ -34,7 +36,7 @@
                            <set var="mensaje">Se ha llegado al final de la serie</set>
                         </li>
                         <li>
-                           <set name="minuto_r">0</set>
+                           <set name="minuto_r">-1</set>
                            <set var="mensaje">Has acabado la temporada <get name="temporada_r"/> pasamos a la siguiente</set>
                            <set name="ncap_r">1</set>
                            <set name="temporada_r"><map name="successor"><get name="temporada_r"/></map></set>
@@ -59,7 +61,7 @@
                               </li>
                            </condition>
 
-                           <set name="minuto_r"><map name="successor"><get name="minuto_r"/></map></set>
+                           <!-- set name="minuto_r"><map name="successor"><get name="minuto_r"/></map></set -->
 
                         </li>
                      </condition>
@@ -67,28 +69,40 @@
                   <li>
                      <set var="mensaje">Has acabado el capitulo <get name="ncap_r"/> pasamos al siguiente</set>
                      <set name="ncap_r"><map name="successor"><get name="ncap_r"/></map></set>
-                     <set name="minuto_r">0</set>
+                     <set name="minuto_r">-1</set>
+
+                     <set var="contador">1</set>
+                     <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+                     <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+                     <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+                     <condition var="contador">
+                        <li><value><get name="ncap_r"/></value>
+                           <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                           <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                           <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                        </li>
+                        <li>
+                           <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                           <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                           <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                           <loop/>
+                        </li>
+                     </condition>
+
+
                   </li>
                </condition>
 
-               <modifymap>
-                  <name><get name="serie"/></name>
-                  <key>t<get name="usuario"/></key>
-                  <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
-               </modifymap>
+
 
             </li>
             <li></li>
          </condition>
 
-         <set name="tiempo"><map name="successor"><get name="tiempo"/></map></set>
          <set var="indice"><map name="successor"><get var="indice"/></map></set>
 
-         <modifymap>
-            <name><get name="serie"/></name>
-            <key>t<get name="usuario"/></key>
-            <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
-         </modifymap>
 
 
          <condition var="mensaje">
@@ -97,7 +111,7 @@
 
             <li>
                <set name="minuto_r"><map name="successor"><get name="minuto_r"/></map></set>
-               <set var="info"> reproduciendo capitulo <get name="duracion_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/></set>
+               <set var="info"> reproduciendo capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/></set>
 
             </li>
          </condition>
@@ -106,11 +120,20 @@
       </li>
    </condition>
 
+   <modifymap>
+      <name><get name="serie"/></name>
+      <key>t<get name="usuario"/></key>
+      <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
+   </modifymap>
+
 
    </think>
 El tiempo total transcurrido es de <get name="tiempo"/> minutos <get var="mensaje"/> <get var="info"/>
 </template>
 </category>
+
+
+</topic>
 
 
 <!-- Una variante de la accion SIMUL para incluir algo como SIMUL 10 minutos -->
@@ -121,7 +144,30 @@ El tiempo total transcurrido es de <get name="tiempo"/> minutos <get var="mensaj
 </template>
 </category>
 
-
+<!-- Hace avanzar el tiempo actual tantos minutos como indica el argumento -->
+<category>
+<pattern> SIMUL <set>number</set> </pattern>
+<template>
+   <think>
+     <condition name="tiempo">
+  	<li value="unknown"> <set name="tiempo">0</set></li>
+     </condition>
+     <set var="indice">0</set>
+   <!-- Ciclo que va incrementando el tiempo de minuto en minuto -->
+   <condition var="indice">
+      <!-- Opcion de salida del ciclo: cuando indice valga el valor del tiempo indicado en SIMUL -->
+      <li> <value><star index="1"/></value></li>
+      <!-- Cuerpo del bucle -->
+      <li>
+         <set name="tiempo"><map name="successor"><get name="tiempo"/></map></set>
+         <set var="indice"><map name="successor"><get var="indice"/></map></set>
+         <loop/>
+      </li>
+   </condition>
+   </think>
+El tiempo total transcurrido es de <get name="tiempo"/> minutos
+</template>
+</category>
 
 <!-- Detectar un uso incorrecto del comando SIMUL -->
 <category>

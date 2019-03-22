@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <aiml version="2.0">
 
+
+
+
    <category>
       <pattern>^ reproduce (la serie) <set>series</set></pattern>
       <template>
          <think><set name="serie"><star index="2"/></set></think>
+         <think><set name="minuto_r">NIL</set></think>
+         <think><set name="topic">verseries</set></think>
          Ok puedes decirme si eres Carlos o Marta
       </template>
    </category>
@@ -19,86 +24,446 @@
       </template>
    </category>
 
-
    <category>
-      <pattern>^ carlos</pattern>
-      <that>ok puedes decirme si eres Carlos o Marta</that>
+      <pattern>^ reproduce (la serie) <set>series</set> (a partir del) (por) (desde) (el) minuto <set>number</set></pattern>
       <template>
-         <think>
-            <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></set>
-            <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></set>
-            <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
-            <set name="duracion_r"></set>
-            <set name="usuario">carlos</set>
+         <think><set name="serie"><star index="2"/></set></think>
+         <think><set name="minuto_r"><star index="3"/></set></think>
+         <think><set name="topic">verseries</set></think>
+         Ok puedes decirme si eres Carlos o Marta
+      </template>
+   </category>
 
-            <set var="contador">1</set>
-            <set name="titulo_r">unknown</set>
-            <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
-            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+   <topic name="verseries">
+      <category>
+         <pattern>^ carlos</pattern>
+         <that>ok puedes decirme si eres Carlos o Marta</that>
+         <template>
+            <think>
+               <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></set>
+               <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></set>
+               <set name="duracion_r"></set>
+               <set name="usuario">carlos</set>
 
-            <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+               <condition name="minuto_r">
+                  <li value="NIL">
+                     <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
+                  </li>
+                  <li></li>
+               </condition>
 
-            <condition var="contador">
-               <li><value><get name="ncap_r"/></value>
-                  <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
-                  <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
-               </li>
+
+               <set var="contador">1</set>
+               <set name="titulo_r">unknown</set>
+               <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+               <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+               <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+               <condition var="contador">
+                  <li><value><get name="ncap_r"/></value>
+                     <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                  </li>
+                  <li>
+                     <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <loop/>
+                  </li>
+               </condition>
+            </think>
+            Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/>
+         </template>
+      </category>
+
+      <category>
+         <pattern>^ marta</pattern>
+         <that>ok puedes decirme si eres Carlos o Marta</that>
+         <template>
+            <think>
+               <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></set>
+               <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></set>
+               <set name="duracion_r"></set>
+               <set name="usuario">marta</set>
+
+               <condition name="minuto_r">
+                  <li value="NIL">
+                     <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></srai></set>
+                  </li>
+                  <li></li>
+               </condition>
+
+               <set var="contador">1</set>
+               <set name="titulo_r">unknown</set>
+               <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+               <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+               <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+               <condition var="contador">
+                  <li><value><get name="ncap_r"/></value>
+                     <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                  </li>
+                  <li>
+                     <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                     <loop/>
+                  </li>
+               </condition>
+            </think>
+            Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/>
+         </template>
+      </category>
+
+
+
+      <category>
+         <pattern>^ [adelanta avanza] ^ <set>number</set> (minuto+) (la reproduccion)</pattern>
+         <template>
+            <think>
+               <set var="mensaje"></set>
+
+              <set var="indice">0</set>
+            <!-- Ciclo que va incrementando el tiempo de minuto en minuto -->
+            <condition var="indice">
+               <!-- Opcion de salida del ciclo: cuando indice valga el valor del tiempo indicado en SIMUL -->
+               <li> <value><star index="3"/></value></li>
+
+               <!-- Cuerpo del bucle -->
                <li>
-                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+
+                  <condition name="minuto_r">
+                     <li><value><get name="duracion_r"/></value>
+
+                        <condition name="ncap_r">
+                           <li><value><get name="n_cap_temporada"/></value>
+                              <condition name="temporada_r">
+                                 <li><value><map><name><get name="serie"/></name>ultimatemporada</map></value>
+                                    <set var="mensaje">Se ha llegado al final de la serie</set>
+                                 </li>
+                                 <li>
+                                    <set name="minuto_r">-1</set>
+                                    <set var="mensaje">Has acabado la temporada <get name="temporada_r"/> pasamos a la siguiente</set>
+                                    <set name="ncap_r">1</set>
+                                    <set name="temporada_r"><map name="successor"><get name="temporada_r"/></map></set>
+
+                                    <set var="contador">1</set>
+                                    <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+                                    <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+                                    <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+                                    <condition var="contador">
+                                       <li><value><get name="ncap_r"/></value>
+                                          <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                       </li>
+                                       <li>
+                                          <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <loop/>
+                                       </li>
+                                    </condition>
+
+                                    <!-- set name="minuto_r"><map name="successor"><get name="minuto_r"/></map></set -->
+
+                                 </li>
+                              </condition>
+                           </li>
+                           <li>
+                              <set var="mensaje">Has acabado el capitulo <get name="ncap_r"/> pasamos al siguiente</set>
+                              <set name="ncap_r"><map name="successor"><get name="ncap_r"/></map></set>
+                              <set name="minuto_r">-1</set>
+
+                              <set var="contador">1</set>
+                              <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+                              <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+                              <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+                              <condition var="contador">
+                                 <li><value><get name="ncap_r"/></value>
+                                    <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                 </li>
+                                 <li>
+                                    <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <loop/>
+                                 </li>
+                              </condition>
+
+
+                           </li>
+                        </condition>
+
+
+
+                     </li>
+                     <li></li>
+                  </condition>
+
+                  <set var="indice"><map name="successor"><get var="indice"/></map></set>
+
+
+
+                  <condition var="mensaje">
+                     <li><value>Se ha llegado al final de la serie</value><set var="info"></set>
+                     </li>
+
+                     <li>
+                        <set name="minuto_r"><map name="successor"><get name="minuto_r"/></map></set>
+                        <set var="info"> reproduciendo capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/></set>
+
+                     </li>
+                  </condition>
+
                   <loop/>
                </li>
             </condition>
-         </think>
-         Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/> donde lo dejaste
-      </template>
-   </category>
 
-   <category>
-      <pattern>^ marta</pattern>
-      <that>ok puedes decirme si eres Carlos o Marta</that>
-      <template>
-         <think>
-            <set name="temporada_r"><srai>TOP <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></set>
-            <set name="ncap_r"><srai>TOP <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></set>
-            <set name="minuto_r"><srai>TOP <srai> REMAIN <srai>REMAIN <srai>DECODELIST <map><name><get name="serie"/></name>tmarta</map></srai></srai></srai></srai></set>
-            <set name="duracion_r"></set>
-            <set name="usuario">marta</set>
+            <modifymap>
+               <name><get name="serie"/></name>
+               <key>t<get name="usuario"/></key>
+               <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
+            </modifymap>
 
-            <set var="contador">1</set>
-            <set name="titulo_r">unknown</set>
-            <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
-            <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+            </think>
+            Adelantada la reproduccion <star index="3"/> minutos <get var="mensaje"/>
+         </template>
+      </category>
 
-            <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
 
-            <condition var="contador">
-               <li><value><get name="ncap_r"/></value>
-                  <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
-                  <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
-               </li>
+      <category>
+         <pattern>^ [retrasa retrocede] ^ <set>number</set> (minuto+) (la reproduccion)</pattern>
+         <template>
+            <think>
+               <set var="mensaje"></set>
+
+              <set var="indice">0</set>
+            <!-- Ciclo que va incrementando el tiempo de minuto en minuto -->
+            <condition var="indice">
+               <!-- Opcion de salida del ciclo: cuando indice valga el valor del tiempo indicado en SIMUL -->
+               <li> <value><star index="3"/></value></li>
+
+               <!-- Cuerpo del bucle -->
                <li>
-                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
-                  <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+
+                  <condition name="minuto_r">
+                     <li><value>0</value>
+
+                        <condition name="ncap_r">
+                           <li><value>1</value>
+                              <condition name="temporada_r">
+                                 <li><value>1</value>
+                                    <set var="mensaje">Se ha llegado al inicio de la serie</set>
+                                 </li>
+                                 <li>
+
+                                    <set var="mensaje">Has acabado la temporada <get name="temporada_r"/> pasamos a la anterior</set>
+                                    <set name="temporada_r"><map name="predecessor"><get name="temporada_r"/></map></set>
+
+                                    <set var="contador">1</set>
+                                    <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+                                    <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+                                    <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+                                    <set name="ncap_r"><get name="n_cap_temporada"/></set>
+
+
+                                    <condition var="contador">
+                                       <li><value><get name="ncap_r"/></value>
+                                          <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                       </li>
+                                       <li>
+                                          <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                          <loop/>
+                                       </li>
+                                    </condition>
+
+                                    <set name="minuto_r"><get name="duracion_r"/></set>
+
+                                 </li>
+                              </condition>
+                           </li>
+                           <li>
+                              <set var="mensaje">Has acabado el capitulo <get name="ncap_r"/> pasamos al anterior</set>
+                              <set name="ncap_r"><map name="predecessor"><get name="ncap_r"/></map></set>
+
+                              <set var="contador">1</set>
+                              <set var="todoscap"><map><name><get name="serie"/></name>temporada<get name="temporada_r"/></map></set>
+                              <set var="todoscap"><srai>DECODELIST <get var="todoscap"/></srai></set>
+
+                              <set name="n_cap_temporada"><srai>COUNTHALF <get var="todoscap"/></srai></set>
+
+                              <condition var="contador">
+                                 <li><value><get name="ncap_r"/></value>
+                                    <set name="titulo_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <set name="duracion_r"><srai>TOP <get var="todoscap"/></srai></set>
+                                 </li>
+                                 <li>
+                                    <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <set var="todoscap"><srai>REMAIN <get var="todoscap"/></srai></set>
+                                    <loop/>
+                                 </li>
+                              </condition>
+
+                              <set name="minuto_r"><get name="duracion_r"/></set>
+
+                           </li>
+                        </condition>
+
+                        <set name="minuto_r"><get name="duracion_r"/></set>
+
+
+                     </li>
+                     <li></li>
+                  </condition>
+
+                  <set var="indice"><map name="successor"><get var="indice"/></map></set>
+
+                  <modifymap>
+                     <name><get name="serie"/></name>
+                     <key>t<get name="usuario"/></key>
+                     <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
+                  </modifymap>
+
+
+                  <condition var="mensaje">
+                     <li><value>Se ha llegado al final de la serie</value><set var="info"></set>
+                     </li>
+
+                     <li>
+                        <set name="minuto_r"><map name="predecessor"><get name="minuto_r"/></map></set>
+                        <set var="info"> reproduciendo capitulo <get name="duracion_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/></set>
+
+                     </li>
+                  </condition>
+
                   <loop/>
                </li>
             </condition>
-         </think>
-         Reproduciendo <get name="titulo_r"/>, capitulo <get name="ncap_r"/> de la temporada <get name="temporada_r"/> de la serie <get name="serie"/> por el minuto <get name="minuto_r"/> donde lo dejaste
-      </template>
-   </category>
 
-   <category>
-      <pattern>^</pattern>
-      <that>puedes decirme si eres Carlos o Marta</that>
-      <template>
-         Lo siento, no reconozco a ese usuario.
-      </template>
-   </category>
+            <modifymap>
+               <name><get name="serie"/></name>
+               <key>t<get name="usuario"/></key>
+               <value><get name="temporada_r"/>@<get name="ncap_r"/>@<get name="minuto_r"/></value>
+            </modifymap>
+
+
+            </think>
+            Retrasada la reproduccion <star index="3"/> minutos <get var="mensaje"/>
+         </template>
+      </category>
+
+      <category>
+         <pattern>^</pattern>
+         <that>puedes decirme si eres Carlos o Marta</that>
+         <template>
+            Lo siento, no reconozco a ese usuario.
+         </template>
+      </category>
+
+
+
+      <category>
+         <pattern>[pon establece cambia] (el) idioma [en a] <set>idiomas</set></pattern>
+         <template>
+            <think>
+               <set var="tmp"><srai>DECODELIST <map><name><get name="serie"/></name>idiomas</map></srai></set>
+               <set var="pos"><srai>FINDITEM <star/> IN <get var="tmp"/> </srai></set>
+               <set var="msg"></set>
+               <condition var="pos">
+                  <li value="0">
+                     <set var="msg">Ese idioma no esta disponible para la serie, escoge entre <srai>ANIADEY <get var="tmp"/></srai></set>
+                  </li>
+                  <li>
+                     <set var="msg">Se ha establecido el <star/> como el idioma de audio para la serie <get name="serie"/></set>
+                     <modifymap>
+                        <name><get name="serie"/></name>
+                        <key>idiomauso</key>
+                        <value><star/></value>
+                     </modifymap>
+                  </li>
+               </condition>
+            </think>
+            <get var="msg"/>
+         </template>
+      </category>
+
+      <category>
+         <pattern>[pon establece cambia] (los) subtitulos [en a] <set>idiomas</set></pattern>
+         <template>
+            <think>
+               <set var="tmp"><srai>DECODELIST <map><name><get name="serie"/></name>subtitulos</map></srai></set>
+               <set var="pos"><srai>FINDITEM <star/> IN <get var="tmp"/> </srai></set>
+               <set var="msg"></set>
+               <condition var="pos">
+                  <li value="0">
+                     <set var="msg">Ese subtitulo no esta disponible para la serie, escoge entre <srai>ANIADEY <get var="tmp"/></srai></set>
+                  </li>
+                  <li>
+                     <set var="msg">Se ha establecido el <star/> como los subtitulos para la serie <get name="serie"/></set>
+                     <modifymap>
+                        <name><get name="serie"/></name>
+                        <key>subtitulosuso</key>
+                        <value><star/></value>
+                     </modifymap>
+                  </li>
+               </condition>
+            </think>
+            <get var="msg"/>
+         </template>
+      </category>
+
+      <category>
+         <pattern>^ activa (los) subtitulos ^</pattern>
+         <template>
+            <modifymap>
+               <name><get name="serie"/></name>
+               <key>subactivados</key>
+               <value>si</value>
+            </modifymap>
+            Se han activado los subtitulos
+         </template>
+      </category>
+
+      <category>
+         <pattern>^ desactiva (los) subtitulos ^</pattern>
+         <template>
+            <modifymap>
+               <name><get name="serie"/></name>
+               <key>subactivados</key>
+               <value>no</value>
+            </modifymap>
+            Se han desactivado los subtitulos
+         </template>
+      </category>
+
+      <category>
+         <pattern>[cierra acaba] la reproduccion</pattern>
+         <template>
+            <set name="topic"></set>
+            Aplicacion cerrada
+         </template>
+      </category>
+   </topic>
 
 
 </aiml>

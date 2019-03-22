@@ -40,7 +40,21 @@
             <key>tmarta</key>
             <value>1@1@0</value>
          </addtomap>
-
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>subtitulosuso</key>
+            <value></value>
+         </addtomap>
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>idiomauso</key>
+            <value></value>
+         </addtomap>
+         <addtomap>
+            <name><get name="serie"/></name>
+            <key>subactivados</key>
+            <value>no</value>
+         </addtomap>
          Dime el genero de la serie <star/>.
 
       </template>

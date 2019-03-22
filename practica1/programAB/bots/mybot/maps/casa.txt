@@ -2,7 +2,7 @@ serie:casa
 plataforma:netflix
 ultimatemporada:2
 tcarlos:2@1@12
-tmarta:1@1@0
+tmarta:2@1@1
 genero:accion
 descripcion:gente_en_su_casa
 idiomas:ingles@frances@espanol@ruso@chino
