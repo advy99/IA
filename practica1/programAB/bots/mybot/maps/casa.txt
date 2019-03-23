@@ -1,8 +1,8 @@
 serie:casa
 plataforma:netflix
 ultimatemporada:2
-tcarlos:2@1@4
-tmarta:1@1@0
+tcarlos:1@1@4
+tmarta:1@2@0
 subtitulosuso:chino
 idiomauso:ingles
 subactivados:no
