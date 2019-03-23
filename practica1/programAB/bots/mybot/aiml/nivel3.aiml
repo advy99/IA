@@ -471,29 +471,42 @@
                      <set name="usuario">ambos</set>
 
                      <set var="series_carlos"><readset>seriescarlos</readset></set>
+                     <set name="nueva_serie"><get name="serie"/></set>
+
                      <set var="series_marta"><readset>seriesmarta</readset></set>
 
                      <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_marta"/></srai></set>
+                     <set var="mensaje"></set>
 
                      <condition var="ambos_ven">
                         <!-- Solo la ve uno -->
                         <li value="0">
 
+                           <set name="nueva_serie"><srai>TOP <get var="series_carlos"/></srai></set>
+                           <set var="ambos_ven"><srai>FINDITEM <get name="nueva_serie"/> IN <get var="series_marta"/></srai></set>
+                           <condition var="series_carlos">
+                              <li value="$">
+                                 <set var="ambos_ven">-1</set>
+                              </li>
+                              <li>
+                                 <set var="mensaje">Se cambiara a la serie <lowercase><get name="nueva_serie"/></lowercase> ya que ambos la estais viendo juntos y marta no ve la serie <get name="serie"/>. </set>
+                              </li>
+                           </condition>
+                           <set var="series_carlos"><srai>REMAIN <get var="series_carlos"/></srai></set>
+                           <loop/>
+                        </li>
 
 
 
-
-
-
-
-
+                        <li value="-1">
+                           <set var="mensaje">No hay series que compartais, sigo reproduciendo la serie de carlos</set>
                         </li>
 
                         <!-- La ven ambos -->
                         <li>
-                           <set name="temporada_marta"><srai> TOP <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></set>
-                           <set name="capitulo_marta"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></set>
-                           <set name="minuto_marta"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
+                           <set name="temporada_marta"><srai> TOP <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></set>
+                           <set name="capitulo_marta"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></set>
+                           <set name="minuto_marta"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
 
                            <set var="indice">1</set>
 
@@ -514,11 +527,11 @@
 
                                                    <condition var="indice_min">
                                                       <li><value><get var="minuto_marta"/></value>
-                                                         <set var="mensaje">Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</set>
+                                                         <set var="mensaje"><get var="mensaje"/> Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</set>
                                                       </li>
 
                                                       <li><value><get name="minuto_r"/></value>
-                                                         <set var="mensaje">Ambos estais viendo la serie, y actualmente Carlos no ha alcanzado a Marta, continuo la reproduccion por el punto de carlos </set>
+                                                         <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie y actualmente Carlos no ha alcanzado a Marta continuo la reproduccion por el punto de carlos </set>
                                                       </li>
 
                                                       <li>
@@ -531,7 +544,7 @@
 
                                                 </li>
                                                 <li>
-                                                   <set var="mensaje">Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a Carlos</set>
+                                                   <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a Carlos</set>
                                                 </li>
 
                                              </condition>
@@ -539,7 +552,7 @@
                                           </li>
 
                                           <li><value><get name="ncap_r"/></value>
-                                             <set var="mensaje">Ambos estais viendo la serie, y actualmente Carlos no ha alcanzado a Marta, continuo la reproduccion por el punto de carlos </set>
+                                             <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie y actualmente Carlos no ha alcanzado a Marta continuo la reproduccion por el punto de carlos </set>
                                           </li>
 
                                           <li>
@@ -551,7 +564,7 @@
 
                                     </li>
                                     <li>
-                                       <set var="mensaje">Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</set>
+                                       <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</set>
                                     </li>
 
                                  </condition>
@@ -559,7 +572,7 @@
                               </li>
 
                               <li><value><get name="temporada_r"/></value>
-                                 <set var="mensaje">Ambos estais viendo la serie, y actualmente Carlos no ha alcanzado a marta, continuo la reproduccion por el punto de carlos </set>
+                                 <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie y actualmente Carlos no ha alcanzado a marta continuo la reproduccion por el punto de carlos </set>
                               </li>
 
                               <li>
@@ -591,24 +604,46 @@
                      <set name="usuario">ambos</set>
 
                      <set var="series_carlos"><readset>seriescarlos</readset></set>
+                     <set name="nueva_serie"><get name="serie"/></set>
+
                      <set var="series_marta"><readset>seriesmarta</readset></set>
 
                      <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_carlos"/></srai></set>
+                     <set var="mensaje"></set>
 
                      <condition var="ambos_ven">
                         <!-- Solo la ve uno -->
                         <li value="0">
 
+                           <set name="nueva_serie"><srai>TOP <get var="series_marta"/></srai></set>
+                           <set var="ambos_ven"><srai>FINDITEM <get name="nueva_serie"/> IN <get var="series_carlos"/></srai></set>
+                           <condition var="series_marta">
+                              <li value="$">
+                                 <set var="ambos_ven">-1</set>
+                              </li>
+                              <li>
+                                 <set var="mensaje">Se cambiara a la serie <lowercase><get name="nueva_serie"/></lowercase> ya que ambos la estais viendo juntos y carlos no ve <get name="serie"/>.</set>
+                              </li>
+                           </condition>
+                           <set var="series_marta"><srai>REMAIN <get var="series_marta"/></srai></set>
+                           <loop/>
                         </li>
+
+
+
+                        <li value="-1">
+                           <set var="mensaje">No hay series que compartais, sigo reproduciendo la serie de carlos</set>
+                        </li>
+
 
                         <!-- La ven ambos -->
                         <li>
-                           <set name="temporada_carlos"><srai> TOP <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></set>
-                           <set name="capitulo_carlos"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></set>
-                           <set name="minuto_carlos"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
+                           <set name="temporada_carlos"><srai> TOP <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></set>
+                           <set name="capitulo_carlos"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></set>
+                           <set name="minuto_carlos"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
 
                            <set var="indice">1</set>
-                           <set var="mensaje"></set>
+
 
                            <condition var="indice">
                               <li><value><get name="temporada_carlos"/></value>
@@ -626,11 +661,11 @@
 
                                                    <condition var="indice_min">
                                                       <li><value><get var="minuto_carlos"/></value>
-                                                         <set var="mensaje">Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
+                                                         <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
                                                       </li>
 
                                                       <li><value><get name="minuto_r"/></value>
-                                                         <set var="mensaje">Ambos estais viendo la serie, y actualmente Marta no ha alcanzado a carlos, continuo la reproduccion por el punto de marta </set>
+                                                         <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie, y actualmente Marta no ha alcanzado a carlos, continuo la reproduccion por el punto de marta </set>
                                                       </li>
 
                                                       <li>
@@ -643,7 +678,7 @@
 
                                                 </li>
                                                 <li>
-                                                   <set var="mensaje">Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
+                                                   <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
                                                 </li>
 
                                              </condition>
@@ -651,7 +686,7 @@
                                           </li>
 
                                           <li><value><get name="ncap_r"/></value>
-                                             <set var="mensaje">Ambos estais viendo la serie, y actualmente Marta no ha alcanzado a carlos, continuo la reproduccion por el punto de marta </set>
+                                             <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie y actualmente Marta no ha alcanzado a carlos continuo la reproduccion por el punto de marta </set>
                                           </li>
 
                                           <li>
@@ -663,7 +698,7 @@
 
                                     </li>
                                     <li>
-                                       <set var="mensaje">Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
+                                       <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
                                     </li>
 
                                  </condition>
@@ -671,7 +706,7 @@
                               </li>
 
                               <li><value><get name="temporada_r"/></value>
-                                 <set var="mensaje">Ambos estais viendo la serie, y actualmente Marta no ha alcanzado a carlos, continuo la reproduccion por el punto de marta </set>
+                                 <set var="mensaje"><get var="mensaje"/> Ambos estais viendo la serie y actualmente Marta no ha alcanzado a carlos continuo la reproduccion por el punto de marta </set>
                               </li>
 
                               <li>
@@ -697,6 +732,7 @@
          <pattern>[si vale perfecto]</pattern>
          <that>Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</that>
          <template>
+            <think><set name="serie"><lowercase><get name="nueva_serie"/></lowercase></set></think>
             <srai>carlos</srai>
          </template>
       </category>
@@ -707,11 +743,11 @@
          <template>De acuerdo, no hare nada</template>
       </category>
 
-
       <category>
          <pattern>[si vale perfecto]</pattern>
          <that>Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</that>
          <template>
+            <think><set name="serie"><lowercase><get name="nueva_serie"/></lowercase></set></think>
             <srai>marta</srai>
          </template>
       </category>
@@ -721,6 +757,43 @@
          <that>Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</that>
          <template>De acuerdo, no hare nada</template>
       </category>
+
+      <category>
+         <pattern>[si vale perfecto]</pattern>
+         <that> Ambos estais viendo la serie y actualmente Marta no ha alcanzado a carlos continuo la reproduccion por el punto de marta</that>
+         <template>
+            <think><set name="serie"><lowercase><get name="nueva_serie"/></lowercase></set></think>
+            <srai>marta</srai>
+         </template>
+      </category>
+
+      <category>
+         <pattern>^ no</pattern>
+         <that> Ambos estais viendo la serie y actualmente Marta no ha alcanzado a carlos continuo la reproduccion por el punto de marta</that>
+         <template>
+            De acuerdo, no hare nada
+         </template>
+      </category>
+
+      <category>
+         <pattern>[si vale perfecto]</pattern>
+         <that> Ambos estais viendo la serie y actualmente Carlos no ha alcanzado a marta continuo la reproduccion por el punto de carlos</that>
+         <template>
+            <think><set name="serie"><lowercase><get name="nueva_serie"/></lowercase></set></think>
+            <srai>carlos</srai>
+         </template>
+      </category>
+
+      <category>
+         <pattern>^ no</pattern>
+         <that> Ambos estais viendo la serie y actualmente Carlos no ha alcanzado a marta continuo la reproduccion por el punto de carlos</that>
+         <template>
+            De acuerdo, no hare nada
+         </template>
+      </category>
+
+
+
    </topic>
 
 

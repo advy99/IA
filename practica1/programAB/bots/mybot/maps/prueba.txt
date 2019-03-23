@@ -1,0 +1,13 @@
+serie:prueba
+plataforma:netflix
+ultimatemporada:1
+tcarlos:1@1@0
+tmarta:1@1@0
+subtitulosuso:
+idiomauso:
+subactivados:no
+idiomas:accion@ingles@castellano@catalan
+descripcion:ppraer
+subtitulos:ingles
+web:sdf
+temporada1:erwew@12@erwgw@23

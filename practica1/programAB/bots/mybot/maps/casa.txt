@@ -8,7 +8,7 @@ idiomauso:ingles
 subactivados:no
 genero:accion@drama
 descripcion:gente_en_su_casa
-idiomas:ingles@espanol@frances@ruso
+idiomas:ingles@espanol@frances@ruso@accion
 subtitulos:ruso@chino
 temporada1:cap1@23@cap2@3
 temporada2:cap1@12
