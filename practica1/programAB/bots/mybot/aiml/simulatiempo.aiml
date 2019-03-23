@@ -102,6 +102,7 @@
          </condition>
 
          <set var="indice"><map name="successor"><get var="indice"/></map></set>
+         <set name="tiempo"><map name="successor"><get name="tiempo"/></map></set>
 
 
 

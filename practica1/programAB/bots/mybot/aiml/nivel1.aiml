@@ -109,8 +109,31 @@
       <pattern><set>generos</set></pattern>
       <that>Dime el genero de la serie *</that>
       <template>
-         <think> <set name="topic">addatributo</set>
-         <srai>ADDATRIBUTO <star/> A genero </srai> </think>
+         <think>
+
+            <set var="contador">0</set>
+            <set var="tope"><srai>COUNT <star/></srai></set>
+            <set var="lista"><star/></set>
+            <condition var="contador">
+               <li><value><get var="tope"/></value></li>
+               <li>
+                  <set var="elemento"><srai>TOP <get var="lista"/></srai></set>
+                  <condition var="elemento">
+                     <li value="y"></li>
+                     <li>
+                        <set name="topic">addatributo</set>
+
+                        <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A idiomas </srai>
+                     </li>
+                  </condition>
+                  <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
+                  <set var="contador"><map name="successor"><get var="contador"/></map></set>
+                  <loop/>
+               </li>
+
+            </condition>
+
+         </think>
          De que va la serie
       </template>
 
@@ -138,9 +161,15 @@
             <condition var="contador">
                <li><value><get var="tope"/></value></li>
                <li>
-                  <set name="topic">addatributo</set>
-                  <srai>TOP <get var="lista"/></srai>
-                  <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A idiomas </srai>
+                  <set var="elemento"><srai>TOP <get var="lista"/></srai></set>
+                  <condition var="elemento">
+                     <li value="y"></li>
+                     <li>
+                        <set name="topic">addatributo</set>
+
+                        <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A idiomas </srai>
+                     </li>
+                  </condition>
                   <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
                   <set var="contador"><map name="successor"><get var="contador"/></map></set>
                   <loop/>
@@ -165,8 +194,15 @@
             <condition var="contador">
                <li><value><get var="tope"/></value></li>
                <li>
-                  <set name="topic">addatributo</set>
-                  <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A subtitulos </srai>
+                  <set var="elemento"><srai>TOP <get var="lista"/></srai></set>
+                  <condition var="elemento">
+                     <li value="y"></li>
+                     <li>
+                        <set name="topic">addatributo</set>
+
+                        <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A subtitulos </srai>
+                     </li>
+                  </condition>
                   <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
                   <set var="contador"><map name="successor"><get var="contador"/></map></set>
                   <loop/>

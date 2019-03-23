@@ -5,7 +5,7 @@
 
    <category>
       <pattern><set>sinonimos_hablar</set> [sobre un de] ^ ti</pattern>
-      <template>Bla bla bla, me llamo Antonio</template>
+      <template>Me llamo Antonio y esudio Ingeniería Informática en la ETSIIT</template>
    </category>
 
    <!-- Pregunta 2 - Cual es tu mayor defecto -->
@@ -33,7 +33,7 @@
 
    <category>
       <pattern>^ preparado ^ <set>sinonimos_trabajo</set> </pattern>
-      <template>Si</template>
+      <template>Considero que si</template>
    </category>
 
    <!-- Pregunta 6 - Tienes experiencia en la realizacion de proyectos en equipos de trabajo -->
@@ -53,7 +53,7 @@
    <!-- Pregunta 8 - Te desplazarias de manera ocasional a otros lugares -->
 
    <category>
-      <pattern>* despla+ [lugar+ sitio+]</pattern>
+      <pattern>* despla+ ^ [lugar+ sitio+]</pattern>
       <template>Si, tengo coche y carnet de conducir</template>
    </category>
 
@@ -61,14 +61,14 @@
 
    <category>
       <pattern>^ [consider+ eres] ^ [alguien persona] [creativ+ imaginativ+] </pattern>
-      <template>No, no soy creativo</template>
+      <template>En la medida de lo necesario, aunque no mucho, la verdad</template>
    </category>
 
    <!-- Pregunta 10 - Que expectativas tienes de este trabajo -->
 
    <category>
       <pattern>^ [expectativas esper+] ^ <set>sinonimos_trabajo</set></pattern>
-      <template>Muchas.</template>
+      <template>Muchas, veremos a ver como acaba.</template>
    </category>
 
    <!-- Pregunta 11 - Que trabajos has tenido en esta tematica -->
@@ -89,21 +89,21 @@
 
    <category>
       <pattern> ^ [aspiraciones espectativas] ^ [salario sueldo salariales] </pattern>
-      <template>No tengo muchas aspiraciones, la verdad, ni salariales ni en la vida</template>
+      <template>Todavia estoy estudiando, aun asi, considero que un buen trabajo ha de estar bien remunerado</template>
    </category>
 
    <!-- Pregunta 14 - Donde te ves dentro de cinco años -->
 
    <category>
       <pattern>[donde como] te ves ^ [cinco 5] [anios anos] </pattern>
-      <template>Muerto.</template>
+      <template>Con la carrera terminada y con trabajando.</template>
    </category>
 
    <!-- Pregunta 15 - No tienes experiencia para el puesto a desempeñar -->
 
    <category>
       <pattern>^ no ^ [experiencia capacitado preparado] ^ <set>sinonimos_trabajo</set> a [realizar hacer desempeniar]</pattern>
-      <template>Yo creo que si seria capaz de realizar el trabajo</template>
+      <template>La experiencia es algo esencial, aun asi, creo que este trabajo no necesita tanta, y es una oportunidad para conseguir esa experiencia</template>
    </category>
 
    <!-- Pregunta 16 - Que sabes de la empresa y el puesto de trabajo -->
@@ -117,14 +117,14 @@
 
    <category>
       <pattern> ^ [haces harias] ^ <set>sinonimos_superior</set> ^ no [tiene lleva] ^ razon ^ </pattern>
-      <template>Decirselo</template>
+      <template>Decirselo, creo que aunque sea mi jefe, si beneficia a la empresa es bueno decirlo</template>
    </category>
 
    <!-- Pregunta 18 - Por que deberiamos escogerte a ti -->
 
    <category>
       <pattern>^ [debemos deberiamos tendriamos] ^ [escogerte seleccionarte contratarte] ^</pattern>
-      <template>Porque soy la unica persona que acepta este sueldo, para este trabajo de mierda.</template>
+      <template>Porque soy capaz de adaptarme al trabajo ademas de que una vez acabado el proyecto no me importaria trabajar en otros o si es necesario mantener este</template>
    </category>
 
 
