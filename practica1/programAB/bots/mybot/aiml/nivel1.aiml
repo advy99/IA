@@ -123,7 +123,7 @@
                      <li>
                         <set name="topic">addatributo</set>
 
-                        <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A idiomas </srai>
+                        <srai>ADDATRIBUTO <srai>TOP <get var="lista"/></srai> A genero </srai>
                      </li>
                   </condition>
                   <set var="lista"><srai>REMAIN <get var="lista"/></srai></set>
@@ -494,23 +494,6 @@
    <category>
       <pattern>[sobre de] que [trata habla] (la serie) *</pattern>
       <template><srai>de que va la serie <star/></srai></template>
-   </category>
-
-
-
-   <category>
-      <pattern> De que va (la serie) <set>series</set> </pattern>
-      <template>
-         <srai>decode<map><name><star/></name>descripcion</map></srai>
-      </template>
-   </category>
-
-   <category>
-      <pattern> De que va (la serie) * </pattern>
-      <template>
-         <think> <set name="serie"><star/></set> </think>
-         La serie <star/> no esta disponible, quieres aniadirla
-      </template>
    </category>
 
 

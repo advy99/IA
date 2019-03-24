@@ -82,7 +82,7 @@
 
 
    <category>
-      <pattern>^ subtitulo+ ^ (disponible+) (la serie) <set>series</set></pattern>
+      <pattern>^ (que) subtitulo+ [tiene estan] ^ (disponible+) (la serie) <set>series</set></pattern>
       <template>
          La serie <star index="3"/> tiene disponible los siguientes subtitulos <srai>ANIADEY <srai>DECODELIST <map><name><star index="3"/></name>subtitulos</map></srai></srai>
       </template>
@@ -98,8 +98,8 @@
 
 
    <category>
-      <pattern>^ subtitulos [tiene esta] (disponible) (la serie) <set>series</set></pattern>
-      <template>La serie <star/> tiene disponible <srai>COUNT <srai>DECODELIST <map><name><star/></name>subtitulos</map></srai></srai> subtitulos</template>
+      <pattern>^ ([cuantos numero]) (de) subtitulos ([tiene esta]) (disponible+) (para) (la serie) <set>series</set></pattern>
+      <template>La serie <star index="2"/> tiene disponible <srai>COUNT <srai>DECODELIST <map><name><star index="2"/></name>subtitulos</map></srai></srai> subtitulos</template>
    </category>
 
 
@@ -217,7 +217,18 @@
       </template>
    </category>
 
-
+   <category>
+      <pattern> [sobre De] que [va trata] (la serie) <set>series</set> </pattern>
+      <template>
+         <srai>decode <map><name><star/></name>descripcion</map></srai>
+      </template>
+   </category>
+   <category>
+      <pattern> [sobre De] que [va trata] (la serie) * </pattern>
+      <template>
+         La serie <star/> no está en el catálogo.
+      </template>
+   </category>
 
 
    <category>
