@@ -37,7 +37,7 @@
    <topic name="verseries">
       <category>
          <pattern>^ carlos</pattern>
-         <!-- that>ok puedes decirme si eres Carlos o Marta</that -->
+
          <template>
             <think>
                <addtoset>
@@ -78,7 +78,7 @@
 
       <category>
          <pattern>^ marta</pattern>
-         <!-- that>ok puedes decirme si eres Carlos o Marta</that -->
+
          <template>
             <think>
                <addtoset>

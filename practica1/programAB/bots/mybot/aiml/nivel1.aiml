@@ -64,14 +64,14 @@
       <pattern>[introduce aniade] (la serie) * a (la plataforma) (amazon) * </pattern>
       <template>
          <think>
-            <!-- Creamos el map donde estara la serie -->
-            <system>touch bots/mybot/maps/<star/>.txt</system>
+
+
             <addtoset>
                <name>series</name>
                <key><star/></key>
             </addtoset>
          </think>
-         Reinicia el bot y vuelve a pedir introducir la serie <star/>
+         crea el fichero bots/mybot/maps/<star/>.txt reinicia el bot y vuelve a pedir introducir la serie <star/>
       </template>
    </category>
 
@@ -86,12 +86,12 @@
    <category>
       <pattern>[introduce aniade] (la serie) * </pattern>
       <template>
-         <system>touch bots/mybot/maps/<star/>.txt</system>
+
          <addtoset>
             <name>series</name>
             <key><star/></key>
          </addtoset>
-         Reinicia el bot y vuelve a pedir introducir la serie <star/>
+         crea el fichero bots/mybot/maps/<star/>.txt reinicia el bot y vuelve a pedir introducir la serie <star/>
 
       </template>
    </category>
