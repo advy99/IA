@@ -475,8 +475,17 @@
 
                      <set var="series_marta"><readset>seriesmarta</readset></set>
 
-                     <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_marta"/></srai></set>
+
                      <set var="mensaje"></set>
+
+                     <condition var="series_marta">
+                        <li><value></value>
+                           <set var="ambos_ven">-1</set>
+                        </li>
+                        <li>
+                           <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_marta"/></srai></set>
+                        </li>
+                     </condition>
 
                      <condition var="ambos_ven">
                         <!-- Solo la ve uno -->
@@ -504,9 +513,9 @@
 
                         <!-- La ven ambos -->
                         <li>
-                           <set name="temporada_marta"><srai> TOP <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></set>
-                           <set name="capitulo_marta"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></set>
-                           <set name="minuto_marta"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tcarlos</map></srai></srai></srai></srai></set>
+                           <set name="temporada_marta"><srai> TOP <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tmarta</map></srai></srai></set>
+                           <set name="capitulo_marta"><srai> TOP <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tmarta</map></srai></srai></srai></set>
+                           <set name="minuto_marta"><srai> TOP <srai> REMAIN <srai> REMAIN <srai> DECODELIST <map><name><get name="nueva_serie"/></name>tmarta</map></srai></srai></srai></srai></set>
 
                            <set var="indice">1</set>
 
@@ -523,10 +532,10 @@
 
                                              <condition name="capitulo_marta">
                                                 <li><value><get name="ncap_r"/></value>
-                                                   <set var="indice_min">1</set>
+                                                   <set var="indice_min">0</set>
 
                                                    <condition var="indice_min">
-                                                      <li><value><get var="minuto_marta"/></value>
+                                                      <li><value><get name="minuto_marta"/></value>
                                                          <set var="mensaje"><get var="mensaje"/> Paso a reproducir por donde lo dejo Marta ya que no ha alcanzado a carlos</set>
                                                       </li>
 
@@ -608,8 +617,16 @@
 
                      <set var="series_marta"><readset>seriesmarta</readset></set>
 
-                     <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_carlos"/></srai></set>
                      <set var="mensaje"></set>
+
+                     <condition var="series_carlos">
+                        <li><value></value>
+                           <set var="ambos_ven">-1</set>
+                        </li>
+                        <li>
+                           <set var="ambos_ven"><srai>FINDITEM <get name="serie"/> IN <get var="series_carlos"/></srai></set>
+                        </li>
+                     </condition>
 
                      <condition var="ambos_ven">
                         <!-- Solo la ve uno -->
@@ -617,7 +634,7 @@
 
                            <set name="nueva_serie"><srai>TOP <get var="series_marta"/></srai></set>
                            <set var="ambos_ven"><srai>FINDITEM <get name="nueva_serie"/> IN <get var="series_carlos"/></srai></set>
-                           <condition var="series_marta">
+                           <condition var="series_carlos">
                               <li value="$">
                                  <set var="ambos_ven">-1</set>
                               </li>
@@ -632,7 +649,7 @@
 
 
                         <li value="-1">
-                           <set var="mensaje">No hay series que compartais, sigo reproduciendo la serie de carlos</set>
+                           <set var="mensaje">No hay series que compartais, sigo reproduciendo la serie de marta</set>
                         </li>
 
 
@@ -657,10 +674,10 @@
 
                                              <condition name="capitulo_carlos">
                                                 <li><value><get name="ncap_r"/></value>
-                                                   <set var="indice_min">1</set>
+                                                   <set var="indice_min">0</set>
 
                                                    <condition var="indice_min">
-                                                      <li><value><get var="minuto_carlos"/></value>
+                                                      <li><value><get name="minuto_carlos"/></value>
                                                          <set var="mensaje"><get var="mensaje"/>Paso a reproducir por donde lo dejo Carlos ya que no ha alcanzado a Marta</set>
                                                       </li>
 
