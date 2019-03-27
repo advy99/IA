@@ -329,6 +329,30 @@ bool ComportamientoJugador::pathFinding_Anchura(const estado &origen, const esta
 }
 
 
+bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan) {
+	cout << "Calculando plan\n";
+	plan.clear();
+	
+	//SIN IMPLEMENTAR
+
+	cout << "Terminada la busqueda\n";
+
+	if (current.st.fila == destino.fila and current.st.columna == destino.columna){
+		cout << "Cargando el plan\n";
+		plan = current.secuencia;
+		cout << "Longitud del plan: " << plan.size() << endl;
+		PintaPlan(plan);
+		// ver el plan en el mapa
+		VisualizaPlan(origen, plan);
+		return true;
+	}
+	else {
+		cout << "No encontrado plan\n";
+	}
+
+	return false;
+}
+
 
 
 // Sacar por la términal la secuencia del plan obtenido
