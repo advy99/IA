@@ -5,15 +5,15 @@
 #include <cmath>
 #include <set>
 #include <stack>
+#include <queue>
 
 
 // Este es el método principal que debe contener los 4 Comportamientos_Jugador
 // que se piden en la práctica. Tiene como entrada la información de los
 // sensores y devuelve la acción a realizar.
 Action ComportamientoJugador::think(Sensores sensores) {
-	Action accion = actIDLE;
 	// Estoy en el nivel 1
-
+	/*
 	if (sensores.nivel != 4){
 		if (sensores.mensajeF != -1){
 			fil = sensores.mensajeF;
@@ -34,9 +34,76 @@ Action ComportamientoJugador::think(Sensores sensores) {
 	else {
 		// Estoy en el nivel 2
 		cout << "Aún no implementado el nivel 2" << endl;
+	}*/
+
+	//Capturar valores de filas y columnas
+	if (sensores.mensajeF != -1){
+		fil = sensores.mensajeF;
+		col = sensores.mensajeC;
+		ultimaAccion = actIDLE;
 	}
 
-  return accion;
+	if (sensores.terreno[0] == 'K'){
+		estoyBienSituado = true;
+	}
+
+	//Actualizar el efecto de la ultima accion
+	switch (ultimaAccion){
+		case actTURN_R: brujula = (brujula+1)%4; break;
+		case actTURN_L: brujula = (brujula+3)%4; break;
+		case actFORWARD:
+			switch (brujula){
+				case 0: fil--; break;
+				case 1: col++; break;
+				case 2: fil++; break;
+				case 3: col--; break;
+			}
+			break;
+	}
+
+	if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
+		destino.fila = sensores.destinoF;
+		destino.columna = sensores.destinoC;
+		hayPlan = false;
+	}
+
+	//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+	if (!hayPlan){
+		actual.fila = fil;
+		actual.columna = col;
+		actual.orientacion = brujula;
+		hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
+	}
+
+
+	// Sistema de Movimiento
+	unsigned char contenidoCasilla;
+	switch (brujula){
+		case 0: contenidoCasilla = mapaResultado[fil-1][col]; break;
+		case 1: contenidoCasilla = mapaResultado[fil][col+1]; break;
+		case 2: contenidoCasilla = mapaResultado[fil+1][col]; break;
+		case 3: contenidoCasilla = mapaResultado[fil][col-1]; break;
+	}
+
+	Action sigAccion;
+	if (hayPlan and plan.size()>0){
+		sigAccion = plan.front();
+		plan.erase(plan.begin());
+	}
+	else{
+		if (contenidoCasilla == 'P' || contenidoCasilla == 'M' ||
+			 contenidoCasilla == 'D' || sensores.superficie[2] == 'a'){
+
+			sigAccion = actTURN_R;
+	 	}
+		else{
+			sigAccion = actFORWARD;
+		}
+	}
+
+	//Recordar ultima accion
+	ultimaAccion = sigAccion;
+  	return sigAccion;
 }
 
 
@@ -48,7 +115,7 @@ bool ComportamientoJugador::pathFinding (int level, const estado &origen, const 
 			      return pathFinding_Profundidad(origen,destino,plan);
 						break;
 		case 2: cout << "Busqueda en Anchura\n";
-			      // Incluir aqui la llamada al busqueda en anchura
+			      return pathFinding_Anchura(origen, destino, plan);
 						break;
 		case 3: cout << "Busqueda Costo Uniforme\n";
 						// Incluir aqui la llamada al busqueda de costo uniforme
@@ -150,7 +217,6 @@ bool ComportamientoJugador::pathFinding_Profundidad(const estado &origen, const 
 		if (generados.find(hijoTurnR.st) == generados.end()){
 			hijoTurnR.secuencia.push_back(actTURN_R);
 			pila.push(hijoTurnR);
-
 		}
 
 		// Generar descendiente de girar a la izquierda
@@ -195,8 +261,72 @@ bool ComportamientoJugador::pathFinding_Profundidad(const estado &origen, const 
 	return false;
 }
 
+bool ComportamientoJugador::pathFinding_Anchura(const estado &origen, const estado &destino, list<Action> &plan) {
+	//Borro la lista
+	cout << "Calculando plan\n";
+	plan.clear();
+
+	queue<nodo> cola_nodos;
+	set<estado,ComparaEstados> generados;
+
+	nodo current;
+  	current.st = origen;
+  	current.secuencia.empty();
 
 
+	cola_nodos.push(current);
+
+	while (!cola_nodos.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
+
+		cola_nodos.pop();
+		generados.insert(current.st);
+
+		nodo rightSon = current;
+		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
+		if(generados.find(rightSon.st) == generados.end()){
+			rightSon.secuencia.push_back(actTURN_R);
+			cola_nodos.push(rightSon);
+		}
+
+		nodo leftSon = current;
+		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
+		if(generados.find(leftSon.st) == generados.end()){
+			leftSon.secuencia.push_back(actTURN_L);
+			cola_nodos.push(leftSon);
+		}
+
+		nodo fowardSon = current;
+		if(!HayObstaculoDelante(fowardSon.st)){
+			if(generados.find(fowardSon.st) == generados.end()){
+				fowardSon.secuencia.push_back(actFORWARD);
+				cola_nodos.push(fowardSon);
+			}
+		}
+
+		if (!cola_nodos.empty()){
+			current = cola_nodos.front();
+		}
+
+	}
+
+  	cout << "Terminada la busqueda\n";
+
+	if (current.st.fila == destino.fila and current.st.columna == destino.columna){
+		cout << "Cargando el plan\n";
+		plan = current.secuencia;
+		cout << "Longitud del plan: " << plan.size() << endl;
+		PintaPlan(plan);
+		// ver el plan en el mapa
+		VisualizaPlan(origen, plan);
+		return true;
+	}
+	else {
+		cout << "No encontrado plan\n";
+	}
+
+
+	return false;
+}
 
 
 
