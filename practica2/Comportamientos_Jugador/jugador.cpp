@@ -330,8 +330,11 @@ bool ComportamientoJugador::pathFinding_Anchura(const estado &origen, const esta
 	return false;
 }
 
-int  ComportamientoJugador::calcularCoste(const estado &n_casilla){
+int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_casilla){
 	int coste = 0;
+
+	if(origen.orientacion != n_casilla.orientacion)
+		coste++;
 
 	switch ((mapaResultado[n_casilla.fila][n_casilla.columna])) {
 		case 'A': coste += 10; break;
@@ -372,7 +375,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		if(generados.find(rightSon.st) == generados.end()){
 			nodo aux = rightSon;
 			rightSon.secuencia.push_back(actTURN_R);
-			abiertos.insert(make_pair(calcularCoste(rightSon.st ),rightSon));
+			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st ),rightSon));
 		}
 
 		nodo leftSon = current;
@@ -380,14 +383,14 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		if(generados.find(leftSon.st) == generados.end()){
 
 			leftSon.secuencia.push_back(actTURN_L);
-			abiertos.insert(make_pair(calcularCoste(leftSon.st) ,leftSon));
+			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st) ,leftSon));
 		}
 
 		nodo fowardSon = current;
 		if(!HayObstaculoDelante(fowardSon.st)){
 			if(generados.find(fowardSon.st) == generados.end()){
 				fowardSon.secuencia.push_back(actFORWARD);
-				abiertos.insert(make_pair(calcularCoste(fowardSon.st) ,fowardSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st) ,fowardSon));
 			}
 		}
 
