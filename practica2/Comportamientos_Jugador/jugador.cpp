@@ -6,7 +6,9 @@
 #include <set>
 #include <stack>
 #include <queue>
+#include <map>
 
+using namespace std;
 
 // Este es el método principal que debe contener los 4 Comportamientos_Jugador
 // que se piden en la práctica. Tiene como entrada la información de los
@@ -118,7 +120,7 @@ bool ComportamientoJugador::pathFinding (int level, const estado &origen, const 
 			      return pathFinding_Anchura(origen, destino, plan);
 						break;
 		case 3: cout << "Busqueda Costo Uniforme\n";
-						// Incluir aqui la llamada al busqueda de costo uniforme
+					return pathFinding_CostoUniforme(origen, destino, plan);
 						break;
 		case 4: cout << "Busqueda para el reto\n";
 						// Incluir aqui la llamada al algoritmo de búsqueda usado en el nivel 2
@@ -328,12 +330,73 @@ bool ComportamientoJugador::pathFinding_Anchura(const estado &origen, const esta
 	return false;
 }
 
+int  ComportamientoJugador::calcularCoste(const estado &n_casilla){
+	int coste = 0;
+
+	switch ((mapaResultado[n_casilla.fila][n_casilla.columna])) {
+		case 'A': coste += 10; break;
+		case 'B': coste += 5; break;
+		case 'T': coste += 2; break;
+		case 'S': coste += 1; break;
+		case 'K': coste += 1; break;
+		case 'M': coste += 1000; break;
+		case 'P': coste += 1000; break;
+	}
+
+
+	return coste;
+}
+
+
 
 bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan) {
 	cout << "Calculando plan\n";
 	plan.clear();
-	
-	//SIN IMPLEMENTAR
+
+	multimap<int, nodo> abiertos;
+	set<estado,ComparaEstados> generados;
+
+	nodo current;
+  	current.st = origen;
+  	current.secuencia.empty();
+
+	abiertos.insert(make_pair(0, current));
+
+	while (!abiertos.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
+
+		abiertos.erase(abiertos.begin());
+		generados.insert(current.st);
+
+		nodo rightSon = current;
+		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
+		if(generados.find(rightSon.st) == generados.end()){
+			nodo aux = rightSon;
+			rightSon.secuencia.push_back(actTURN_R);
+			abiertos.insert(make_pair(calcularCoste(rightSon.st ),rightSon));
+		}
+
+		nodo leftSon = current;
+		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
+		if(generados.find(leftSon.st) == generados.end()){
+
+			leftSon.secuencia.push_back(actTURN_L);
+			abiertos.insert(make_pair(calcularCoste(leftSon.st) ,leftSon));
+		}
+
+		nodo fowardSon = current;
+		if(!HayObstaculoDelante(fowardSon.st)){
+			if(generados.find(fowardSon.st) == generados.end()){
+				fowardSon.secuencia.push_back(actFORWARD);
+				abiertos.insert(make_pair(calcularCoste(fowardSon.st) ,fowardSon));
+			}
+		}
+
+
+		if (!abiertos.empty()){
+			current = abiertos.begin()->second;
+		}
+
+	}
 
 	cout << "Terminada la busqueda\n";
 

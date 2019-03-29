@@ -58,6 +58,7 @@ class ComportamientoJugador : public Comportamiento {
     bool pathFinding_Profundidad(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_Anchura(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan);
+    int  calcularCoste(const estado &n_casilla);
 
     void PintaPlan(list<Action> plan);
     bool HayObstaculoDelante(estado &st);
