@@ -394,14 +394,6 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 			}
 		}
 
-		nodo behindSon = current;
-		behindSon.st.orientacion = (behindSon.st.orientacion+2) % 4;
-		if(generados.find(behindSon.st) == generados.end()){
-
-			behindSon.secuencia.push_back(actTURN_L);
-			abiertos.insert(make_pair(calcularCoste(current.st, behindSon.st) ,behindSon));
-		}
-
 
 		if (!abiertos.empty()){
 			current = abiertos.begin()->second;
