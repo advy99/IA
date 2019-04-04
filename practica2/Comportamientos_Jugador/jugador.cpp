@@ -342,15 +342,20 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 		case 'T': coste += 2; break;
 		case 'S': coste += 1; break;
 		case 'K': coste += 1; break;
-		case 'M': coste += 1000; break;
-		case 'P': coste += 1000; break;
+		case 'M': coste += 10000; break;
+		case 'P': coste += 10000; break;
 	}
 
 
 	return coste;
 }
 
-
+bool ComparaNodo(const estado &a, const estado &n) {
+	if (a.fila == n.fila and a.columna == n.columna )
+		return true;
+	else
+		return false;
+}
 
 bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan) {
 	cout << "Calculando plan\n";
@@ -361,7 +366,8 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 	nodo current;
   	current.st = origen;
-  	current.secuencia.empty();
+  	current.secuencia.clear();
+	int coste_antiguo = 0;
 
 	abiertos.insert(make_pair(0, current));
 
@@ -372,31 +378,78 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 		nodo rightSon = current;
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
-		if(generados.find(rightSon.st) == generados.end()){
-			nodo aux = rightSon;
+		if(generados.find(rightSon.st) != generados.end()){
+			bool encontrado = false;
+			for(multimap<int, nodo>::const_iterator it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, rightSon.st )){
+
+					encontrado = true;
+
+					if (calcularCoste(current.st, rightSon.st )+coste_antiguo < it->first){
+						abiertos.erase(it);
+						rightSon.secuencia.push_back(actTURN_R);
+						abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
+					}
+
+				}
+			}
+
+		} else{
 			rightSon.secuencia.push_back(actTURN_R);
-			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st ),rightSon));
+			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
 		}
 
 		nodo leftSon = current;
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
-		if(generados.find(leftSon.st) == generados.end()){
+		if(generados.find(leftSon.st) != generados.end()){
+			bool encontrado = false;
+			for(multimap<int, nodo>::const_iterator it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, leftSon.st )){
+					encontrado = true;
 
+					if (calcularCoste(current.st, leftSon.st )+coste_antiguo < it->first){
+						abiertos.erase(it);
+						leftSon.secuencia.push_back(actTURN_L);
+						abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
+					}
+
+				}
+			}
+
+		}else{
 			leftSon.secuencia.push_back(actTURN_L);
-			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st) ,leftSon));
+			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
 		}
 
 		nodo fowardSon = current;
 		if(!HayObstaculoDelante(fowardSon.st)){
-			if(generados.find(fowardSon.st) == generados.end()){
+			if(generados.find(fowardSon.st) != generados.end()){
+				bool encontrado = false;
+				for(multimap<int, nodo>::const_iterator it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+					if(ComparaNodo((*it).second.st, fowardSon.st )){
+						encontrado = true;
+
+						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo < it->first){
+							abiertos.erase(it);
+							fowardSon.secuencia.push_back(actTURN_L);
+							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+						}
+
+					}
+				}
+
+
+			}
+			else{
 				fowardSon.secuencia.push_back(actFORWARD);
-				abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st) ,fowardSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st)+coste_antiguo ,fowardSon));
 			}
 		}
 
 
 		if (!abiertos.empty()){
 			current = abiertos.begin()->second;
+			coste_antiguo = abiertos.begin()->first;
 		}
 
 	}
