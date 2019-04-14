@@ -351,7 +351,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 }
 
 bool ComparaNodo(const estado &a, const estado &n) {
-	if (a.fila == n.fila and a.columna == n.columna and a.orientacion > n.orientacion)
+	if (a.fila == n.fila and a.columna == n.columna )
 		return true;
 	else
 		return false;
@@ -382,49 +382,18 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		nodo rightSon = current;
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
 		if(generados.find(rightSon.st) == generados.end()){
-			bool encontrado = false;
-			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
-				if(ComparaNodo((*it).second.st, rightSon.st )){
 
-					encontrado = true;
-
-					if (calcularCoste(current.st, rightSon.st )+coste_antiguo < it->first){
-						abiertos.erase(it);
-						rightSon.secuencia.push_back(actTURN_R);
-						abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
-					}
-
-				}
-			}
-
-			if(!encontrado){
-				rightSon.secuencia.push_back(actTURN_R);
-				abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
-			}
+			rightSon.secuencia.push_back(actTURN_R);
+			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
 
 		}
 
 		nodo leftSon = current;
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
 		if(generados.find(leftSon.st) == generados.end()){
-			bool encontrado = false;
-			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
-				if(ComparaNodo((*it).second.st, leftSon.st )){
-					encontrado = true;
 
-					if (calcularCoste(current.st, leftSon.st )+coste_antiguo < it->first){
-						abiertos.erase(it);
-						leftSon.secuencia.push_back(actTURN_L);
-						abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
-					}
-
-				}
-			}
-
-			if (!encontrado){
-				leftSon.secuencia.push_back(actTURN_L);
-				abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
-			}
+			leftSon.secuencia.push_back(actTURN_L);
+			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
 
 		}
 
@@ -466,7 +435,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		cout << "Cargando el plan\n";
 		plan = current.secuencia;
 		cout << "Longitud del plan: " << plan.size() << endl;
-		cout << "Coste del plan " << coste_antiguo << endl;
+		//cout << "Coste del plan " << coste_antiguo << endl;
 		PintaPlan(plan);
 		// ver el plan en el mapa
 		VisualizaPlan(origen, plan);
