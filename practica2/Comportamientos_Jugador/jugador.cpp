@@ -7,8 +7,17 @@
 #include <stack>
 #include <queue>
 #include <map>
+#include <vector>
 
 using namespace std;
+
+bool EsObstaculo(unsigned char casilla){
+	if (casilla=='P' or casilla=='M' or casilla =='D')
+		return true;
+	else
+	  return false;
+}
+
 
 // Este es el método principal que debe contener los 4 Comportamientos_Jugador
 // que se piden en la práctica. Tiene como entrada la información de los
@@ -38,70 +47,276 @@ Action ComportamientoJugador::think(Sensores sensores) {
 		cout << "Aún no implementado el nivel 2" << endl;
 	}*/
 
-	//Capturar valores de filas y columnas
-	if (sensores.mensajeF != -1){
-		fil = sensores.mensajeF;
-		col = sensores.mensajeC;
-		ultimaAccion = actIDLE;
-	}
 
-	if (sensores.terreno[0] == 'K'){
-		estoyBienSituado = true;
-	}
-
-	//Actualizar el efecto de la ultima accion
-	switch (ultimaAccion){
-		case actTURN_R: brujula = (brujula+1)%4; break;
-		case actTURN_L: brujula = (brujula+3)%4; break;
-		case actFORWARD:
-			switch (brujula){
-				case 0: fil--; break;
-				case 1: col++; break;
-				case 2: fil++; break;
-				case 3: col--; break;
-			}
-			break;
-	}
-
-	if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
-		destino.fila = sensores.destinoF;
-		destino.columna = sensores.destinoC;
-		hayPlan = false;
-	}
-
-	//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
-	if (!hayPlan){
-		actual.fila = fil;
-		actual.columna = col;
-		actual.orientacion = brujula;
-		hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
-	}
-
-
-	// Sistema de Movimiento
-	unsigned char contenidoCasilla;
-	switch (brujula){
-		case 0: contenidoCasilla = mapaResultado[fil-1][col]; break;
-		case 1: contenidoCasilla = mapaResultado[fil][col+1]; break;
-		case 2: contenidoCasilla = mapaResultado[fil+1][col]; break;
-		case 3: contenidoCasilla = mapaResultado[fil][col-1]; break;
-	}
 
 	Action sigAccion;
-	if (hayPlan and plan.size()>0){
-		sigAccion = plan.front();
-		plan.erase(plan.begin());
-	}
-	else{
-		if (contenidoCasilla == 'P' || contenidoCasilla == 'M' ||
-			 contenidoCasilla == 'D' || sensores.superficie[2] == 'a'){
 
-			sigAccion = actTURN_R;
-	 	}
-		else{
-			sigAccion = actFORWARD;
+	//Capturar valores de filas y columnas
+
+
+	if (sensores.nivel == 4){
+
+		if (sensores.mensajeF != -1){
+			fil = sensores.mensajeF;
+			col = sensores.mensajeC;
+			ultimaAccion = actIDLE;
 		}
+
+
+
+		if (estoyBienSituado){
+			actual.orientacion = brujula;
+
+			switch (ultimaAccion){
+				case actTURN_R: brujula = (brujula+1)%4; break;
+				case actTURN_L: brujula = (brujula+3)%4; break;
+				case actFORWARD:
+					switch (brujula){
+						case 0: fil--; break;
+						case 1: col++; break;
+						case 2: fil++; break;
+						case 3: col--; break;
+					}
+					break;
+			}
+
+			int k = 0;
+
+			switch (actual.orientacion) {
+				case 0:
+					for(unsigned int i = 0; i < 4; i++){
+						for(unsigned int j = 0; j <= i*2; j++ ){
+							if (mapaResultado[fil - i][col - i + j] == '?')
+								mapaResultado[fil - i][col - i + j] = sensores.terreno[k];
+							k++;
+						}
+					}
+					break;
+
+				case 1:
+					for(unsigned int i = 0; i < 4; i++){
+						for(unsigned int j = 0; j <= i*2; j++ ){
+							if (mapaResultado[fil - i + j][col + i] == '?')
+								mapaResultado[fil - i + j][col + i] = sensores.terreno[k];
+							k++;
+						}
+					}
+					break;
+
+				case 2:
+					for(unsigned int i = 0; i < 4; i++){
+						for(unsigned int j = 0; j <= i*2; j++ ){
+							if (mapaResultado[fil + i][col + i - j] == '?')
+								mapaResultado[fil + i][col + i - j] = sensores.terreno[k];
+							k++;
+						}
+					}
+					break;
+
+				case 3:
+					for(unsigned int i = 0; i < 4; i++){
+						for(unsigned int j = 0; j <= i*2; j++ ){
+							if (mapaResultado[fil + i - j][col - i] == '?')
+								mapaResultado[fil + i - j][col - i] = sensores.terreno[k];
+							k++;
+						}
+					}
+					break;
+			}
+
+
+
+			if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
+				destino.fila = sensores.destinoF;
+				destino.columna = sensores.destinoC;
+				hayPlan = false;
+			}
+
+			//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+			if (!hayPlan){
+				actual.fila = fil;
+				actual.columna = col;
+				actual.orientacion = brujula;
+				hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
+			}
+
+			if (hayPlan and plan.size()>0){
+
+				sigAccion = actIDLE;
+
+				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
+					hayPlan = false;
+				} else if (sensores.superficie[2] != 'a' ){
+					sigAccion = plan.front();
+					plan.erase(plan.begin());
+				}
+
+			}
+			else{
+				if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
+					 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
+
+					sigAccion = actTURN_R;
+				}
+				else{
+					sigAccion = actFORWARD;
+				}
+			}
+
+
+		} else{
+			//por hacer
+
+			actual.orientacion = brujula;
+
+			switch (ultimaAccion){
+				case actTURN_R: brujula = (brujula+1)%4; break;
+				case actTURN_L: brujula = (brujula+3)%4; break;
+				case actFORWARD:
+					switch (brujula){
+						case 0: fil_img--; break;
+						case 1: col_img++; break;
+						case 2: fil_img++; break;
+						case 3: col_img--; break;
+					}
+					break;
+			}
+
+			mapaImg[fil_img][col_img]++;
+
+
+			int c_izq, c_der, c_del;
+
+			if (EsObstaculo(sensores.terreno[2])){
+				switch (brujula) {
+					case 0: mapaImg[fil_img-1][col_img] = 99999; break;
+					case 1: mapaImg[fil_img][col_img+1] = 99999; break;
+					case 2: mapaImg[fil_img+1][col_img] = 99999; break;
+					case 3: mapaImg[fil_img][col_img-1] = 99999; break;
+				}
+			}
+
+			switch (brujula) {
+				case 0:
+					c_izq = mapaImg[fil_img][col_img-1];
+					c_der = mapaImg[fil_img][col_img+1];
+					c_del = mapaImg[fil_img-1][col_img];
+					break;
+				case 1:
+					c_izq = mapaImg[fil_img-1][col_img];
+					c_der = mapaImg[fil_img+1][col_img];
+					c_del = mapaImg[fil_img][col_img+1];
+					break;
+				case 2:
+					c_izq = mapaImg[fil_img][col_img+1];
+					c_der = mapaImg[fil_img][col_img-1];
+					c_del = mapaImg[fil_img+1][col_img];
+					break;
+				case 3:
+					c_izq = mapaImg[fil_img+1][col_img];
+					c_der = mapaImg[fil_img-1][col_img];
+					c_del = mapaImg[fil_img][col_img-1];
+					break;
+
+			}
+
+
+			cout << c_izq << " " << c_der << " " << c_del << " " << mapaImg[fil_img][col_img] << endl;
+
+
+
+
+			sigAccion = actFORWARD;
+
+
+			if (c_izq < c_del){
+				sigAccion = actTURN_L;
+			} else if (c_der < c_del) {
+				sigAccion = actTURN_R;
+			}
+
+
+			if (sensores.terreno[0] == 'K'){
+				fil = sensores.mensajeF;
+				col = sensores.mensajeC;
+				ultimaAccion = actIDLE;
+				sigAccion = actIDLE;
+				estoyBienSituado = true;
+			}
+
+
+		}
+
+	} else{
+
+		if (sensores.mensajeF != -1){
+			fil = sensores.mensajeF;
+			col = sensores.mensajeC;
+			ultimaAccion = actIDLE;
+		}
+
+
+		//Actualizar el efecto de la ultima accion
+		switch (ultimaAccion){
+			case actTURN_R: brujula = (brujula+1)%4; break;
+			case actTURN_L: brujula = (brujula+3)%4; break;
+			case actFORWARD:
+				switch (brujula){
+					case 0: fil--; break;
+					case 1: col++; break;
+					case 2: fil++; break;
+					case 3: col--; break;
+				}
+				break;
+		}
+
+
+		if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
+			destino.fila = sensores.destinoF;
+			destino.columna = sensores.destinoC;
+			hayPlan = false;
+		}
+
+		//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+		if (!hayPlan){
+			actual.fila = fil;
+			actual.columna = col;
+			actual.orientacion = brujula;
+			hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
+		}
+
+
+		if (hayPlan and plan.size()>0){
+
+			sigAccion = actIDLE;
+
+			if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
+				hayPlan = false;
+			} else if (sensores.superficie[2] != 'a' ){
+				sigAccion = plan.front();
+				plan.erase(plan.begin());
+			}
+
+		}
+		else{
+			if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
+				 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
+
+				sigAccion = actTURN_R;
+			}
+			else{
+				sigAccion = actFORWARD;
+			}
+		}
+
 	}
+
+
+
+	//movimiento
+
+
+
 
 	//Recordar ultima accion
 	ultimaAccion = sigAccion;
@@ -123,6 +338,7 @@ bool ComportamientoJugador::pathFinding (int level, const estado &origen, const 
 					return pathFinding_CostoUniforme(origen, destino, plan);
 						break;
 		case 4: cout << "Busqueda para el reto\n";
+						return pathFinding_A_Estrella(origen, destino, plan);
 						// Incluir aqui la llamada al algoritmo de búsqueda usado en el nivel 2
 						break;
 	}
@@ -135,12 +351,6 @@ bool ComportamientoJugador::pathFinding (int level, const estado &origen, const 
 
 // Dado el código en carácter de una casilla del mapa dice si se puede
 // pasar por ella sin riegos de morir o chocar.
-bool EsObstaculo(unsigned char casilla){
-	if (casilla=='P' or casilla=='M' or casilla =='D')
-		return true;
-	else
-	  return false;
-}
 
 
 // Comprueba si la casilla que hay delante es un obstaculo. Si es un
@@ -344,6 +554,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 		case 'K': coste += 1; break;
 		case 'M': coste += 10000; break;
 		case 'P': coste += 10000; break;
+		case '?': coste += 3; break;
 	}
 
 
@@ -447,6 +658,108 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 	return false;
 }
+
+
+
+
+
+
+
+
+bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const estado &destino, list<Action> &plan) {
+	cout << "Calculando plan\n";
+	plan.clear();
+
+	cout << origen.fila << " " << origen.columna << " " << destino.fila << " " << destino.columna << endl;
+
+	multimap<int, nodo> abiertos;
+	set<estado,ComparaEstados> generados;
+
+	nodo current;
+	current.st = origen;
+	current.secuencia.clear();
+
+
+	abiertos.insert(make_pair(0,current));
+	int coste_antiguo = 0;
+
+	while (!abiertos.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
+
+		abiertos.erase(abiertos.begin());
+		generados.insert(current.st);
+
+		nodo rightSon = current;
+		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
+		if(generados.find(rightSon.st) == generados.end()){
+
+			rightSon.secuencia.push_back(actTURN_R);
+			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
+
+		}
+
+		nodo leftSon = current;
+		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
+		if(generados.find(leftSon.st) == generados.end()){
+
+			leftSon.secuencia.push_back(actTURN_L);
+			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
+
+		}
+
+		nodo fowardSon = current;
+		if(!HayObstaculoDelante(fowardSon.st)){
+			if(generados.find(fowardSon.st) == generados.end()){
+				bool encontrado = false;
+				for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+					if(ComparaNodo((*it).second.st, fowardSon.st )){
+						encontrado = true;
+
+						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo < it->first){
+							abiertos.erase(it);
+							fowardSon.secuencia.push_back(actFORWARD);
+							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+						}
+
+					}
+				}
+
+				if (!encontrado){
+					fowardSon.secuencia.push_back(actFORWARD);
+					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+				}
+			}
+		}
+
+
+		if (!abiertos.empty()){
+			current = abiertos.begin()->second;
+			coste_antiguo = abiertos.begin()->first;
+		}
+
+	}
+
+	cout << "Terminada la busqueda\n";
+
+	if (current.st.fila == destino.fila and current.st.columna == destino.columna){
+		cout << "Cargando el plan\n";
+		plan = current.secuencia;
+		cout << "Longitud del plan: " << plan.size() << endl;
+		//cout << "Coste del plan " << coste_antiguo << endl;
+		PintaPlan(plan);
+		// ver el plan en el mapa
+		VisualizaPlan(origen, plan);
+		return true;
+	}
+	else {
+		cout << "No encontrado plan\n";
+	}
+
+	return false;
+}
+
+
+
+
 
 
 

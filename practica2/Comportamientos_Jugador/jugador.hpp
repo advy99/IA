@@ -23,6 +23,16 @@ class ComportamientoJugador : public Comportamiento {
       ultimaAccion = actIDLE;
       estoyBienSituado = false;
       hayPlan = false;
+
+      vector<unsigned int> aux(200, 0);
+
+		for(unsigned int i = 0; i < 200; i++){
+			mapaImg.push_back(aux);
+		}
+
+      fil_img = 99;
+      col_img = 99;
+
     }
     ComportamientoJugador(std::vector< std::vector< unsigned char> > mapaR) : Comportamiento(mapaR) {
       // Inicializar Variables de Estado
@@ -53,11 +63,18 @@ class ComportamientoJugador : public Comportamiento {
     bool hayPlan;
     bool estoyBienSituado;
 
+    //Nuevas variables de estado nivel 2
+    vector< vector <unsigned int> > mapaImg;
+    int fil_img;
+    int col_img;
+
+
     // Métodos privados de la clase
     bool pathFinding(int level, const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_Profundidad(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_Anchura(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan);
+    bool pathFinding_A_Estrella(const estado &origen, const estado &destino, list<Action> &plan);
     int  calcularCoste(const estado &origen, const estado &n_casilla);
 
     void PintaPlan(list<Action> plan);
