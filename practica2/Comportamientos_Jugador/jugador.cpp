@@ -156,6 +156,12 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			}
 
+			recalcular--;
+
+			if (recalcular == 0){
+				hayPlan = false;
+				recalcular = 5;
+			}
 
 		} else{
 			//por hacer
@@ -307,7 +313,6 @@ Action ComportamientoJugador::think(Sensores sensores) {
 						PintaPlan(plan);
 
 						hayPlan = true;
-						cout << av <<" " << lateral << endl;
 
 
 				}
@@ -643,8 +648,8 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 		case 'T': coste += 2; break;
 		case 'S': coste += 1; break;
 		case 'K': coste += 1; break;
-		case 'M': coste += 10000; break;
-		case 'P': coste += 10000; break;
+		case 'M': coste += 999999; break;
+		case 'P': coste += 999999; break;
 		case '?': coste += 3; break;
 	}
 
@@ -737,7 +742,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		cout << "Cargando el plan\n";
 		plan = current.secuencia;
 		cout << "Longitud del plan: " << plan.size() << endl;
-		//cout << "Coste del plan " << coste_antiguo << endl;
+		cout << "Coste del plan " << coste_antiguo << endl;
 		PintaPlan(plan);
 		// ver el plan en el mapa
 		VisualizaPlan(origen, plan);
@@ -774,6 +779,8 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 	abiertos.insert(make_pair(0,current));
 	int coste_antiguo = 0;
 
+	int distancia_manhattan;
+
 	while (!abiertos.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
 
 		abiertos.erase(abiertos.begin());
@@ -784,7 +791,8 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		if(generados.find(rightSon.st) == generados.end()){
 
 			rightSon.secuencia.push_back(actTURN_R);
-			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
+			distancia_manhattan = abs(rightSon.st.fila - destino.fila) + abs(rightSon.st.columna - destino.columna);
+			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
 
 		}
 
@@ -793,7 +801,8 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		if(generados.find(leftSon.st) == generados.end()){
 
 			leftSon.secuencia.push_back(actTURN_L);
-			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
+			distancia_manhattan = abs(leftSon.st.fila - destino.fila) + abs(leftSon.st.columna - destino.columna);
+			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
 
 		}
 
@@ -801,14 +810,16 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		if(!HayObstaculoDelante(fowardSon.st)){
 			if(generados.find(fowardSon.st) == generados.end()){
 				bool encontrado = false;
+				distancia_manhattan = abs(fowardSon.st.fila - destino.fila) + abs(fowardSon.st.columna - destino.columna);
 				for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
 					if(ComparaNodo((*it).second.st, fowardSon.st )){
 						encontrado = true;
 
-						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo < it->first){
+						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan < it->first){
 							abiertos.erase(it);
 							fowardSon.secuencia.push_back(actFORWARD);
-							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+
+							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan,fowardSon));
 						}
 
 					}
@@ -816,7 +827,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 				if (!encontrado){
 					fowardSon.secuencia.push_back(actFORWARD);
-					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan,fowardSon));
 				}
 			}
 		}
@@ -835,7 +846,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		cout << "Cargando el plan\n";
 		plan = current.secuencia;
 		cout << "Longitud del plan: " << plan.size() << endl;
-		//cout << "Coste del plan " << coste_antiguo << endl;
+		cout << "Coste del plan " << coste_antiguo << endl;
 		PintaPlan(plan);
 		// ver el plan en el mapa
 		VisualizaPlan(origen, plan);
