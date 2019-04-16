@@ -55,6 +55,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 
 	if (sensores.nivel == 4){
+		//nivel 2
 
 		if (sensores.mensajeF != -1){
 			fil = sensores.mensajeF;
@@ -65,7 +66,6 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 
 		if (estoyBienSituado){
-			actual.orientacion = brujula;
 
 			switch (ultimaAccion){
 				case actTURN_R: brujula = (brujula+1)%4; break;
@@ -79,6 +79,9 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					}
 					break;
 			}
+
+			actual.orientacion = brujula;
+
 
 			int k = 0;
 
@@ -152,22 +155,11 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				}
 
 			}
-			else{
-				if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
-					 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
-
-					sigAccion = actTURN_R;
-				}
-				else{
-					sigAccion = actFORWARD;
-				}
-			}
 
 
 		} else{
 			//por hacer
 
-			actual.orientacion = brujula;
 
 			switch (ultimaAccion){
 				case actTURN_R: brujula = (brujula+1)%4; break;
@@ -182,59 +174,158 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					break;
 			}
 
-			mapaImg[fil_img][col_img]++;
+			actual.orientacion = brujula;
 
+			if (!hayPlan){
 
-			int c_izq, c_der, c_del;
+				int posK = -1;
 
-			if (EsObstaculo(sensores.terreno[2])){
-				switch (brujula) {
-					case 0: mapaImg[fil_img-1][col_img] = 99999; break;
-					case 1: mapaImg[fil_img][col_img+1] = 99999; break;
-					case 2: mapaImg[fil_img+1][col_img] = 99999; break;
-					case 3: mapaImg[fil_img][col_img-1] = 99999; break;
+				for (auto it = sensores.terreno.begin(); it != sensores.terreno.end() && posK == -1; ++it){
+					if ((*it) == 'K')
+						posK = distance(sensores.terreno.begin(), it);
 				}
+
+				if (posK == -1){
+
+
+					mapaImg[fil_img][col_img]++;
+
+
+					int c_izq, c_der, c_del;
+
+					if (EsObstaculo(sensores.terreno[2])){
+						switch (brujula) {
+							case 0: mapaImg[fil_img-1][col_img] = 99999; break;
+							case 1: mapaImg[fil_img][col_img+1] = 99999; break;
+							case 2: mapaImg[fil_img+1][col_img] = 99999; break;
+							case 3: mapaImg[fil_img][col_img-1] = 99999; break;
+						}
+					}
+
+					switch (brujula) {
+						case 0:
+							c_izq = mapaImg[fil_img][col_img-1];
+							c_der = mapaImg[fil_img][col_img+1];
+							c_del = mapaImg[fil_img-1][col_img];
+							break;
+						case 1:
+							c_izq = mapaImg[fil_img-1][col_img];
+							c_der = mapaImg[fil_img+1][col_img];
+							c_del = mapaImg[fil_img][col_img+1];
+							break;
+						case 2:
+							c_izq = mapaImg[fil_img][col_img+1];
+							c_der = mapaImg[fil_img][col_img-1];
+							c_del = mapaImg[fil_img+1][col_img];
+							break;
+						case 3:
+							c_izq = mapaImg[fil_img+1][col_img];
+							c_der = mapaImg[fil_img-1][col_img];
+							c_del = mapaImg[fil_img][col_img-1];
+							break;
+
+					}
+
+
+					//cout << c_izq << " " << c_der << " " << c_del << " " << mapaImg[fil_img][col_img] << endl;
+
+
+
+
+					sigAccion = actFORWARD;
+
+
+					if (c_der < c_del){
+
+						if (c_izq < c_der) {
+							sigAccion = actTURN_L;
+						}
+						else {
+					  		sigAccion = actTURN_R;
+					 	}
+
+					} else if (c_izq < c_del) {
+						if (c_izq < c_der) {
+							sigAccion = actTURN_L;
+						}
+						else {
+					  		sigAccion = actTURN_R;
+					 	}
+					}
+
+
+
+				}
+
+				else{
+
+
+						int av = 0;
+						int lateral = 0;
+
+						if ( posK > 0 and posK < 4 ){
+							av = 1;
+							if (posK > 2 )
+								lateral = 1;
+							else if (posK < 2)
+								lateral = -1;
+
+						} else if (posK < 9){
+							av = 2;
+							if (posK > 6 )
+								if (posK % 2 == 0) lateral = 2; else lateral = 1;
+							else if (posK < 6 )
+								if (posK % 2 == 0) lateral = -2; else lateral = -1;
+
+						} else {
+							av = 3;
+							if (posK > 12 )
+								if (posK % 2 == 0) lateral = 2; else lateral = 1;
+							else if (posK < 12 )
+								if (posK % 2 == 0) lateral = -2; else lateral = -1;
+
+							if (posK == 9) lateral -= 2;
+							if (posK == 15) lateral += 2;
+
+						}
+
+						plan.clear();
+						for (int i = 0; i < av; i++){
+							plan.push_back(actFORWARD);
+						}
+
+						if (lateral > 0){
+							plan.push_back(actTURN_R);
+						} else{
+							plan.push_back(actTURN_L);
+						}
+
+						for (int i = 0; i < abs(lateral); i++){
+							plan.push_back(actFORWARD);
+						}
+
+						PintaPlan(plan);
+
+						hayPlan = true;
+						cout << av <<" " << lateral << endl;
+
+
+				}
+
 			}
 
-			switch (brujula) {
-				case 0:
-					c_izq = mapaImg[fil_img][col_img-1];
-					c_der = mapaImg[fil_img][col_img+1];
-					c_del = mapaImg[fil_img-1][col_img];
-					break;
-				case 1:
-					c_izq = mapaImg[fil_img-1][col_img];
-					c_der = mapaImg[fil_img+1][col_img];
-					c_del = mapaImg[fil_img][col_img+1];
-					break;
-				case 2:
-					c_izq = mapaImg[fil_img][col_img+1];
-					c_der = mapaImg[fil_img][col_img-1];
-					c_del = mapaImg[fil_img+1][col_img];
-					break;
-				case 3:
-					c_izq = mapaImg[fil_img+1][col_img];
-					c_der = mapaImg[fil_img-1][col_img];
-					c_del = mapaImg[fil_img][col_img-1];
-					break;
+			if (hayPlan and plan.size()>0){
+
+				sigAccion = actIDLE;
+
+				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
+					hayPlan = false;
+				} else if (sensores.superficie[2] != 'a' ){
+					sigAccion = plan.front();
+					plan.erase(plan.begin());
+				}
 
 			}
-
-
-			cout << c_izq << " " << c_der << " " << c_del << " " << mapaImg[fil_img][col_img] << endl;
-
-
-
-
-			sigAccion = actFORWARD;
-
-
-			if (c_izq < c_del){
-				sigAccion = actTURN_L;
-			} else if (c_der < c_del) {
-				sigAccion = actTURN_R;
-			}
-
 
 			if (sensores.terreno[0] == 'K'){
 				fil = sensores.mensajeF;
@@ -244,10 +335,10 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				estoyBienSituado = true;
 			}
 
-
 		}
 
 	} else{
+		//Nivel 1
 
 		if (sensores.mensajeF != -1){
 			fil = sensores.mensajeF;
