@@ -160,7 +160,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			if (recalcular == 0){
 				hayPlan = false;
-				recalcular = 5;
+				recalcular = 4;
 			}
 
 		} else{
@@ -325,6 +325,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 					hayPlan = false;
+					sigAccion = actTURN_R;
 				} else if (sensores.superficie[2] != 'a' ){
 					sigAccion = plan.front();
 					plan.erase(plan.begin());

@@ -23,6 +23,7 @@ class ComportamientoJugador : public Comportamiento {
       ultimaAccion = actIDLE;
       estoyBienSituado = false;
       hayPlan = false;
+      recalcular = 4;
 
       vector<unsigned int> aux(200, 0);
 
@@ -68,6 +69,7 @@ class ComportamientoJugador : public Comportamiento {
     int fil_img;
     int col_img;
 
+    int recalcular;
 
     // Métodos privados de la clase
     bool pathFinding(int level, const estado &origen, const estado &destino, list<Action> &plan);
