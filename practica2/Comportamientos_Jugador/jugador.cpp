@@ -659,7 +659,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 }
 
 bool ComparaNodo(const estado &a, const estado &n) {
-	if (a.fila == n.fila and a.columna == n.columna )
+	if (a.fila == n.fila and a.columna == n.columna and a.orientacion == n.orientacion)
 		return true;
 	else
 		return false;
@@ -691,8 +691,25 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
 		if(generados.find(rightSon.st) == generados.end()){
 
-			rightSon.secuencia.push_back(actTURN_R);
-			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
+
+			bool encontrado = false;
+			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, rightSon.st )){
+					encontrado = true;
+
+					if (coste_antiguo+1 < it->first){
+						abiertos.erase(it);
+						rightSon.secuencia.push_back(actTURN_R);
+						abiertos.insert(make_pair(coste_antiguo+1,rightSon));
+					}
+
+				}
+			}
+
+			if (!encontrado){
+				rightSon.secuencia.push_back(actTURN_R);
+				abiertos.insert(make_pair(coste_antiguo + 1,rightSon));
+			}
 
 		}
 
@@ -700,8 +717,24 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
 		if(generados.find(leftSon.st) == generados.end()){
 
-			leftSon.secuencia.push_back(actTURN_L);
-			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
+			bool encontrado = false;
+			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, leftSon.st )){
+					encontrado = true;
+
+					if (coste_antiguo+1 < it->first){
+						abiertos.erase(it);
+						leftSon.secuencia.push_back(actTURN_L);
+						abiertos.insert(make_pair(coste_antiguo+1,leftSon));
+					}
+
+				}
+			}
+
+			if (!encontrado){
+				leftSon.secuencia.push_back(actTURN_L);
+				abiertos.insert(make_pair(coste_antiguo + 1,leftSon));
+			}
 
 		}
 
@@ -791,9 +824,25 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
 		if(generados.find(rightSon.st) == generados.end()){
 
-			rightSon.secuencia.push_back(actTURN_R);
-			distancia_manhattan = abs(rightSon.st.fila - destino.fila) + abs(rightSon.st.columna - destino.columna);
-			abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
+
+			bool encontrado = false;
+			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, rightSon.st )){
+					encontrado = true;
+
+					if (coste_antiguo+1 < it->first){
+						abiertos.erase(it);
+						rightSon.secuencia.push_back(actTURN_R);
+						abiertos.insert(make_pair(coste_antiguo+1,rightSon));
+					}
+
+				}
+			}
+
+			if (!encontrado){
+				rightSon.secuencia.push_back(actTURN_R);
+				abiertos.insert(make_pair(coste_antiguo + 1,rightSon));
+			}
 
 		}
 
@@ -801,26 +850,41 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
 		if(generados.find(leftSon.st) == generados.end()){
 
-			leftSon.secuencia.push_back(actTURN_L);
-			distancia_manhattan = abs(leftSon.st.fila - destino.fila) + abs(leftSon.st.columna - destino.columna);
-			abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
+			bool encontrado = false;
+			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
+				if(ComparaNodo((*it).second.st, leftSon.st )){
+					encontrado = true;
+
+					if (coste_antiguo+1 < it->first){
+						abiertos.erase(it);
+						leftSon.secuencia.push_back(actTURN_L);
+						abiertos.insert(make_pair(coste_antiguo+1,leftSon));
+					}
+
+				}
+			}
+
+			if (!encontrado){
+				leftSon.secuencia.push_back(actTURN_L);
+				abiertos.insert(make_pair(coste_antiguo + 1,leftSon));
+			}
 
 		}
+
 
 		nodo fowardSon = current;
 		if(!HayObstaculoDelante(fowardSon.st)){
 			if(generados.find(fowardSon.st) == generados.end()){
-				bool encontrado = false;
 				distancia_manhattan = abs(fowardSon.st.fila - destino.fila) + abs(fowardSon.st.columna - destino.columna);
+				bool encontrado = false;
 				for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
 					if(ComparaNodo((*it).second.st, fowardSon.st )){
 						encontrado = true;
 
-						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan < it->first){
+						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan < it->first){
 							abiertos.erase(it);
 							fowardSon.secuencia.push_back(actFORWARD);
-
-							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan,fowardSon));
+							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan,fowardSon));
 						}
 
 					}
@@ -828,7 +892,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 				if (!encontrado){
 					fowardSon.secuencia.push_back(actFORWARD);
-					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo + distancia_manhattan,fowardSon));
+					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan,fowardSon));
 				}
 			}
 		}
