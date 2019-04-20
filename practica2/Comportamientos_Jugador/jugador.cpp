@@ -182,6 +182,8 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			actual.orientacion = brujula;
 
+			mapaImg[fil_img][col_img]++;
+
 			if (!hayPlan){
 
 				int posK = -1;
@@ -192,10 +194,6 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				}
 
 				if (posK == -1){
-
-
-					mapaImg[fil_img][col_img]++;
-
 
 					int c_izq, c_der, c_del;
 
@@ -339,6 +337,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				ultimaAccion = actIDLE;
 				sigAccion = actIDLE;
 				estoyBienSituado = true;
+
 			}
 
 		}
@@ -800,7 +799,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 	cout << "Calculando plan\n";
 	plan.clear();
 
-	cout << origen.fila << " " << origen.columna << " " << destino.fila << " " << destino.columna << endl;
+	//cout << origen.fila << " " << origen.columna << " " << destino.fila << " " << destino.columna << endl;
 
 	multimap<int, nodo> abiertos;
 	set<estado,ComparaEstados> generados;
@@ -881,7 +880,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 					if(ComparaNodo((*it).second.st, fowardSon.st )){
 						encontrado = true;
 
-						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan < it->first){
+						if ((calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan) < it->first){
 							abiertos.erase(it);
 							fowardSon.secuencia.push_back(actFORWARD);
 							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan,fowardSon));
