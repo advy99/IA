@@ -149,7 +149,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 					hayPlan = false;
-				} else if (sensores.superficie[2] != 'a' ){
+				} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD ){
 					sigAccion = plan.front();
 					plan.erase(plan.begin());
 				}
@@ -199,10 +199,10 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 					if (EsObstaculo(sensores.terreno[2])){
 						switch (brujula) {
-							case 0: mapaImg[fil_img-1][col_img] = 99999; break;
-							case 1: mapaImg[fil_img][col_img+1] = 99999; break;
-							case 2: mapaImg[fil_img+1][col_img] = 99999; break;
-							case 3: mapaImg[fil_img][col_img-1] = 99999; break;
+							case 0: mapaImg[fil_img-1][col_img] = 999999; break;
+							case 1: mapaImg[fil_img][col_img+1] = 999999; break;
+							case 2: mapaImg[fil_img+1][col_img] = 999999; break;
+							case 3: mapaImg[fil_img][col_img-1] = 999999; break;
 						}
 					}
 
@@ -324,7 +324,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 					hayPlan = false;
 					sigAccion = actTURN_R;
-				} else if (sensores.superficie[2] != 'a' ){
+				} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD ){
 					sigAccion = plan.front();
 					plan.erase(plan.begin());
 				}
@@ -388,7 +388,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 				hayPlan = false;
-			} else if (sensores.superficie[2] != 'a' ){
+			} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD){
 				sigAccion = plan.front();
 				plan.erase(plan.begin());
 			}
@@ -642,7 +642,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 	if(origen.orientacion != n_casilla.orientacion)
 		coste++;
 
-	switch ((mapaResultado[n_casilla.fila][n_casilla.columna])) {
+	else switch ((mapaResultado[n_casilla.fila][n_casilla.columna])) {
 		case 'A': coste += 10; break;
 		case 'B': coste += 5; break;
 		case 'T': coste += 2; break;
@@ -696,10 +696,10 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 				if(ComparaNodo((*it).second.st, rightSon.st )){
 					encontrado = true;
 
-					if (coste_antiguo+1 < it->first){
+					if (calcularCoste(current.st, rightSon.st )+coste_antiguo < it->first){
 						abiertos.erase(it);
 						rightSon.secuencia.push_back(actTURN_R);
-						abiertos.insert(make_pair(coste_antiguo+1,rightSon));
+						abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
 					}
 
 				}
@@ -707,7 +707,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 			if (!encontrado){
 				rightSon.secuencia.push_back(actTURN_R);
-				abiertos.insert(make_pair(coste_antiguo + 1,rightSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
 			}
 
 		}
@@ -721,10 +721,10 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 				if(ComparaNodo((*it).second.st, leftSon.st )){
 					encontrado = true;
 
-					if (coste_antiguo+1 < it->first){
+					if (calcularCoste(current.st, leftSon.st )+coste_antiguo < it->first){
 						abiertos.erase(it);
 						leftSon.secuencia.push_back(actTURN_L);
-						abiertos.insert(make_pair(coste_antiguo+1,leftSon));
+						abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
 					}
 
 				}
@@ -732,7 +732,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 			if (!encontrado){
 				leftSon.secuencia.push_back(actTURN_L);
-				abiertos.insert(make_pair(coste_antiguo + 1,leftSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
 			}
 
 		}
@@ -822,17 +822,17 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		nodo rightSon = current;
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
 		if(generados.find(rightSon.st) == generados.end()){
-
+			//cout << rightSon.st.fila << " " << rightSon.st.columna << " " << (calcularCoste(current.st, rightSon.st )+coste_antiguo) << endl;
 
 			bool encontrado = false;
 			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
 				if(ComparaNodo((*it).second.st, rightSon.st )){
 					encontrado = true;
 
-					if (coste_antiguo+1 < it->first){
+					if (calcularCoste(current.st, rightSon.st )+coste_antiguo < it->first){
 						abiertos.erase(it);
 						rightSon.secuencia.push_back(actTURN_R);
-						abiertos.insert(make_pair(coste_antiguo+1,rightSon));
+						abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
 					}
 
 				}
@@ -840,7 +840,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 			if (!encontrado){
 				rightSon.secuencia.push_back(actTURN_R);
-				abiertos.insert(make_pair(coste_antiguo + 1,rightSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo,rightSon));
 			}
 
 		}
@@ -848,16 +848,16 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 		nodo leftSon = current;
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
 		if(generados.find(leftSon.st) == generados.end()){
-
+			//cout << leftSon.st.fila << " " << leftSon.st.columna << " " << (calcularCoste(current.st, leftSon.st )+coste_antiguo) << endl;
 			bool encontrado = false;
 			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
 				if(ComparaNodo((*it).second.st, leftSon.st )){
 					encontrado = true;
 
-					if (coste_antiguo+1 < it->first){
+					if (calcularCoste(current.st, leftSon.st )+coste_antiguo < it->first){
 						abiertos.erase(it);
 						leftSon.secuencia.push_back(actTURN_L);
-						abiertos.insert(make_pair(coste_antiguo+1,leftSon));
+						abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
 					}
 
 				}
@@ -865,7 +865,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 			if (!encontrado){
 				leftSon.secuencia.push_back(actTURN_L);
-				abiertos.insert(make_pair(coste_antiguo + 1,leftSon));
+				abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo,leftSon));
 			}
 
 		}
@@ -873,9 +873,14 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 		nodo fowardSon = current;
 		if(!HayObstaculoDelante(fowardSon.st)){
+
+
 			if(generados.find(fowardSon.st) == generados.end()){
 				distancia_manhattan = abs(fowardSon.st.fila - destino.fila) + abs(fowardSon.st.columna - destino.columna);
+				distancia_manhattan *=0.1;
 				bool encontrado = false;
+				///cout << fowardSon.st.fila << " " << fowardSon.st.columna << " " << (calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan)  << " " << distancia_manhattan << endl;
+
 				for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
 					if(ComparaNodo((*it).second.st, fowardSon.st )){
 						encontrado = true;
