@@ -489,6 +489,7 @@ bool ComportamientoJugador::HayObstaculoDelante(estado &st){
 struct nodo{
 	estado st;
 	list<Action> secuencia;
+	int coste;
 };
 
 struct ComparaEstados{
@@ -669,21 +670,27 @@ bool ComparaNodo(const estado &a, const estado &n) {
 }
 
 
+struct OrdenaNodo{
+	bool operator()(const nodo &a, const nodo &n) const{
+		return a.coste < n.coste;
+	}
+};
+
 
 bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan) {
 	cout << "Calculando plan\n";
 	plan.clear();
 
-	multimap<int, nodo> abiertos;
+	multiset<nodo, OrdenaNodo> abiertos;
 	set<estado,ComparaEstados> generados;
 
 	nodo current;
 	current.st = origen;
 	current.secuencia.clear();
 
+	current.coste = 0;
 
-	abiertos.insert(make_pair(0,current));
-	int coste_antiguo = 0;
+	abiertos.insert(current);
 
 	while (!abiertos.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
 
@@ -694,16 +701,17 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		rightSon.st.orientacion = (rightSon.st.orientacion+1) % 4;
 		if(generados.find(rightSon.st) == generados.end()){
 
+			rightSon.coste += calcularCoste(current.st, rightSon.st );
 
 			bool encontrado = false;
 			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
-				if(ComparaNodo((*it).second.st, rightSon.st )){
+				if(ComparaNodo((*it).st, rightSon.st )){
 					encontrado = true;
 
-					if (calcularCoste(current.st, rightSon.st )+coste_antiguo < it->first){
+					if (rightSon.coste < it->coste){
 						abiertos.erase(it);
 						rightSon.secuencia.push_back(actTURN_R);
-						abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
+						abiertos.insert(rightSon);
 					}
 
 				}
@@ -711,7 +719,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 			if (!encontrado){
 				rightSon.secuencia.push_back(actTURN_R);
-				abiertos.insert(make_pair(calcularCoste(current.st, rightSon.st )+coste_antiguo ,rightSon));
+				abiertos.insert(rightSon);
 			}
 
 		}
@@ -720,15 +728,17 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		leftSon.st.orientacion = (leftSon.st.orientacion+3) % 4;
 		if(generados.find(leftSon.st) == generados.end()){
 
+			leftSon.coste += calcularCoste(current.st, leftSon.st );
+
 			bool encontrado = false;
 			for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
-				if(ComparaNodo((*it).second.st, leftSon.st )){
+				if(ComparaNodo((*it).st, leftSon.st )){
 					encontrado = true;
 
-					if (calcularCoste(current.st, leftSon.st )+coste_antiguo < it->first){
+					if (leftSon.coste < it->coste){
 						abiertos.erase(it);
 						leftSon.secuencia.push_back(actTURN_L);
-						abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
+						abiertos.insert(leftSon);
 					}
 
 				}
@@ -736,23 +746,25 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 			if (!encontrado){
 				leftSon.secuencia.push_back(actTURN_L);
-				abiertos.insert(make_pair(calcularCoste(current.st, leftSon.st )+coste_antiguo ,leftSon));
+				abiertos.insert(leftSon);
 			}
-
 		}
 
 		nodo fowardSon = current;
 		if(!HayObstaculoDelante(fowardSon.st)){
 			if(generados.find(fowardSon.st) == generados.end()){
+
+				fowardSon.coste += calcularCoste(current.st, fowardSon.st );
+
 				bool encontrado = false;
 				for(auto it = abiertos.begin(); it!= abiertos.end() and !encontrado; ++it){
-					if(ComparaNodo((*it).second.st, fowardSon.st )){
+					if(ComparaNodo((*it).st, fowardSon.st )){
 						encontrado = true;
 
-						if (calcularCoste(current.st, fowardSon.st )+coste_antiguo < it->first){
+						if (fowardSon.coste < it->coste){
 							abiertos.erase(it);
 							fowardSon.secuencia.push_back(actFORWARD);
-							abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+							abiertos.insert(fowardSon);
 						}
 
 					}
@@ -760,15 +772,14 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 
 				if (!encontrado){
 					fowardSon.secuencia.push_back(actFORWARD);
-					abiertos.insert(make_pair(calcularCoste(current.st, fowardSon.st )+coste_antiguo,fowardSon));
+					abiertos.insert(fowardSon);
 				}
 			}
 		}
 
 
 		if (!abiertos.empty()){
-			current = abiertos.begin()->second;
-			coste_antiguo = abiertos.begin()->first;
+			current = (*abiertos.begin());
 		}
 
 	}
@@ -779,7 +790,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		cout << "Cargando el plan\n";
 		plan = current.secuencia;
 		cout << "Longitud del plan: " << plan.size() << endl;
-		cout << "Coste del plan " << coste_antiguo << endl;
+		cout << "Coste del plan " << current.coste << endl;
 		PintaPlan(plan);
 		// ver el plan en el mapa
 		VisualizaPlan(origen, plan);
