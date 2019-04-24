@@ -1,3 +1,4 @@
+
 #include "../Comportamientos_Jugador/jugador.hpp"
 #include "motorlib/util.h"
 
@@ -54,7 +55,72 @@ Action ComportamientoJugador::think(Sensores sensores) {
 	//Capturar valores de filas y columnas
 
 
-	if (sensores.nivel == 4){
+	if (sensores.nivel != 4){
+		//nivel 1
+
+		if (sensores.mensajeF != -1){
+			fil = sensores.mensajeF;
+			col = sensores.mensajeC;
+			ultimaAccion = actIDLE;
+		}
+
+
+		//Actualizar el efecto de la ultima accion
+		switch (ultimaAccion){
+			case actTURN_R: brujula = (brujula+1)%4; break;
+			case actTURN_L: brujula = (brujula+3)%4; break;
+			case actFORWARD:
+				switch (brujula){
+					case 0: fil--; break;
+					case 1: col++; break;
+					case 2: fil++; break;
+					case 3: col--; break;
+				}
+				break;
+		}
+
+
+		if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
+			destino.fila = sensores.destinoF;
+			destino.columna = sensores.destinoC;
+			hayPlan = false;
+		}
+
+		//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+		if (!hayPlan){
+			actual.fila = fil;
+			actual.columna = col;
+			actual.orientacion = brujula;
+			hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
+		}
+
+
+		if (hayPlan and plan.size()>0){
+
+			sigAccion = actIDLE;
+
+			if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
+				hayPlan = false;
+			} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD){
+				sigAccion = plan.front();
+				plan.erase(plan.begin());
+			}
+
+		}
+		else{
+			if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
+				 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
+
+				sigAccion = actTURN_R;
+			}
+			else{
+				sigAccion = actFORWARD;
+			}
+		}
+
+
+
+	} else{
 		//nivel 2
 
 		if (sensores.mensajeF != -1){
@@ -245,16 +311,16 @@ Action ComportamientoJugador::think(Sensores sensores) {
 							sigAccion = actTURN_L;
 						}
 						else {
-					  		sigAccion = actTURN_R;
-					 	}
+							sigAccion = actTURN_R;
+						}
 
 					} else if (c_izq < c_del) {
 						if (c_izq < c_der) {
 							sigAccion = actTURN_L;
 						}
 						else {
-					  		sigAccion = actTURN_R;
-					 	}
+							sigAccion = actTURN_R;
+						}
 					}
 
 
@@ -342,68 +408,6 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 		}
 
-	} else{
-		//Nivel 1
-
-		if (sensores.mensajeF != -1){
-			fil = sensores.mensajeF;
-			col = sensores.mensajeC;
-			ultimaAccion = actIDLE;
-		}
-
-
-		//Actualizar el efecto de la ultima accion
-		switch (ultimaAccion){
-			case actTURN_R: brujula = (brujula+1)%4; break;
-			case actTURN_L: brujula = (brujula+3)%4; break;
-			case actFORWARD:
-				switch (brujula){
-					case 0: fil--; break;
-					case 1: col++; break;
-					case 2: fil++; break;
-					case 3: col--; break;
-				}
-				break;
-		}
-
-
-		if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
-			destino.fila = sensores.destinoF;
-			destino.columna = sensores.destinoC;
-			hayPlan = false;
-		}
-
-		//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
-		if (!hayPlan){
-			actual.fila = fil;
-			actual.columna = col;
-			actual.orientacion = brujula;
-			hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
-		}
-
-
-		if (hayPlan and plan.size()>0){
-
-			sigAccion = actIDLE;
-
-			if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
-				hayPlan = false;
-			} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD){
-				sigAccion = plan.front();
-				plan.erase(plan.begin());
-			}
-
-		}
-		else{
-			if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
-				 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
-
-				sigAccion = actTURN_R;
-			}
-			else{
-				sigAccion = actFORWARD;
-			}
-		}
 
 	}
 
@@ -877,7 +881,7 @@ bool ComportamientoJugador::pathFinding_A_Estrella(const estado &origen, const e
 
 			if(generados.find(fowardSon.st) == generados.end()){
 				distancia_manhattan = abs(fowardSon.st.fila - destino.fila) + abs(fowardSon.st.columna - destino.columna);
-				distancia_manhattan *=0.1;
+				distancia_manhattan *=0.07;
 				bool encontrado = false;
 				///cout << fowardSon.st.fila << " " << fowardSon.st.columna << " " << (calcularCoste(current.st, fowardSon.st )+coste_antiguo+distancia_manhattan)  << " " << distancia_manhattan << endl;
 
