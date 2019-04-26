@@ -9,6 +9,7 @@ struct estado {
   int fila;
   int columna;
   int orientacion;
+  int coste;
 };
 
 class ComportamientoJugador : public Comportamiento {
