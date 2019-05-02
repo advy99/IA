@@ -79,14 +79,16 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				break;
 		}
 
-
+		//Comprobamos si ha cambiado la posición del objetivo
 		if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
 			destino.fila = sensores.destinoF;
 			destino.columna = sensores.destinoC;
 			hayPlan = false;
 		}
 
-		//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+		// Si no hay plan, establecemos la fila,  columna y orientacion del
+		//  estado actual a la fila y columna obtenida por los sensores
+		//  y buscamos un plan
 		if (!hayPlan){
 			actual.fila = fil;
 			actual.columna = col;
@@ -95,27 +97,44 @@ Action ComportamientoJugador::think(Sensores sensores) {
 		}
 
 
+		// Si tenemos un plan, y es viable (la longitud es mayor que 0):
 		if (hayPlan and plan.size()>0){
 
 			sigAccion = actIDLE;
 
+			// Comprobamos si la casilla de delante es un obstaculo, y si lo
+			// es, establecemos hayPlan a falso, y recalculamos el plan
 			if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 				hayPlan = false;
 			} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD){
+				//en caso de que no sea un obstaculo o la accion sea un giro
+				// si no hay un aldeano delante, o si es un giro realizamos el plan
 				sigAccion = plan.front();
 				plan.erase(plan.begin());
 			}
+			// en caso de que tengamos un aldeano delante y la accion del plan sea
+			// avanzar, simplemente esperamos a que el aldeano se mueva
+
+			//Esta situacion en principio no puede darse en el nivel 1 ya que
+			// no hay aldeanos, aun asi, he decidido mantener esta comprobación
+			// de cara a algún cambio imprevisto
 
 		}
 		else{
+			//en caso de no encontrar plan, realizamos un comportamiento reactivo,
+			// comprobamos si lo que tenemos delante es un problema a
+			// la hora de moverse hacia delante
 			if (sensores.terreno[2] == 'P' || sensores.terreno[2] == 'M' ||
 				 sensores.terreno[2] == 'D' || sensores.superficie[2] == 'a'){
-
+			   //si lo es, giramos
 				sigAccion = actTURN_R;
 			}
 			else{
+				//si no, avanzamos
 				sigAccion = actFORWARD;
 			}
+
+
 		}
 
 
@@ -123,16 +142,19 @@ Action ComportamientoJugador::think(Sensores sensores) {
 	} else{
 		//nivel 2
 
+		// si estamos sobre un PK guardamos los datos de fila y columna
 		if (sensores.mensajeF != -1){
 			fil = sensores.mensajeF;
 			col = sensores.mensajeC;
 			ultimaAccion = actIDLE;
+			estoyBienSituado = true;
 		}
 
 
-
+		// si estoy bien situado, es decir, he encontrado un PK
 		if (estoyBienSituado){
 
+			//actualizo el estado conforme a la ultima accion
 			switch (ultimaAccion){
 				case actTURN_R: brujula = (brujula+1)%4; break;
 				case actTURN_L: brujula = (brujula+3)%4; break;
@@ -149,9 +171,11 @@ Action ComportamientoJugador::think(Sensores sensores) {
 			actual.orientacion = brujula;
 
 
+			// pintamos la parte del mapa que el personaje es capaz de observar
+			// usando sensores.terreno
 			int k = 0;
-
 			switch (actual.orientacion) {
+				//si estamos mirando al norte
 				case 0:
 					for(unsigned int i = 0; i < 4; i++){
 						for(unsigned int j = 0; j <= i*2; j++ ){
@@ -162,6 +186,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					}
 					break;
 
+				//si estamos mirando al este
 				case 1:
 					for(unsigned int i = 0; i < 4; i++){
 						for(unsigned int j = 0; j <= i*2; j++ ){
@@ -172,6 +197,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					}
 					break;
 
+				//si estamos mirando al sur
 				case 2:
 					for(unsigned int i = 0; i < 4; i++){
 						for(unsigned int j = 0; j <= i*2; j++ ){
@@ -182,6 +208,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					}
 					break;
 
+				//si estamos mirando al oeste
 				case 3:
 					for(unsigned int i = 0; i < 4; i++){
 						for(unsigned int j = 0; j <= i*2; j++ ){
@@ -194,14 +221,15 @@ Action ComportamientoJugador::think(Sensores sensores) {
 			}
 
 
-
+			// comprobamos si ha cambiado el objetivo y en caso de que se mueva
+			// recolocamos el destino
 			if (sensores.destinoF != destino.fila or sensores.destinoC != destino.columna){
 				destino.fila = sensores.destinoF;
 				destino.columna = sensores.destinoC;
 				hayPlan = false;
 			}
 
-			//cout << "Fila: " << fil << " Col: " << col << " Or: " << brujula << endl;
+			// si no hay plan, actualizamos el estado actual y buscamos el plan
 			if (!hayPlan){
 				actual.fila = fil;
 				actual.columna = col;
@@ -209,10 +237,13 @@ Action ComportamientoJugador::think(Sensores sensores) {
 				hayPlan =  pathFinding(sensores.nivel, actual, destino, plan);
 			}
 
+			// si encuentra el plan, lo ejecutamos
 			if (hayPlan and plan.size()>0){
 
 				sigAccion = actIDLE;
 
+				// si el plan pasa por un obstaculo, tenemos que recalcular el plan
+				// luego no hacemos nada, y establecemos hayPlan a falso
 				if (EsObstaculo(sensores.terreno[2]) and plan.front() == actFORWARD ){
 					hayPlan = false;
 				} else if (sensores.superficie[2] != 'a' || plan.front() != actFORWARD ){
@@ -222,17 +253,20 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			}
 
+			// realizamos una accion, queda una menos para recalcular el plan
 			recalcular--;
 
+			// cuando hemos ejecutado 4 acciones, recalculamos el plan
 			if (recalcular == 0){
 				hayPlan = false;
 				recalcular = 4;
 			}
 
 		} else{
-			//por hacer
+			// si no estamos bien situados
 
-
+			// actualizamos unas variables "imaginarias" que contienen la
+			// una posicion relativa
 			switch (ultimaAccion){
 				case actTURN_R: brujula = (brujula+1)%4; break;
 				case actTURN_L: brujula = (brujula+3)%4; break;
@@ -248,6 +282,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 
 			actual.orientacion = brujula;
 
+			// en 
 			mapaImg[fil_img][col_img]++;
 
 			if (!hayPlan){
@@ -412,12 +447,6 @@ Action ComportamientoJugador::think(Sensores sensores) {
 	}
 
 
-
-	//movimiento
-
-
-
-
 	//Recordar ultima accion
 	ultimaAccion = sigAccion;
   	return sigAccion;
@@ -485,7 +514,9 @@ bool ComportamientoJugador::HayObstaculoDelante(estado &st){
 
 
 
-
+//estructura nodo, trabajaremos con ella para consular los estados, la
+// secuencia de acciones para llegar a ese estado, el coste de llegar a ese
+// estado, la heuristica de ese nodo, y el coste total (coste + heuristica)
 struct nodo{
 	estado st;
 	list<Action> secuencia;
@@ -661,7 +692,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 		case 'K': coste += 1; break;
 		case 'M': coste += 999999; break;
 		case 'P': coste += 999999; break;
-		case '?': coste += 3; break;
+		case '?': coste += 2; break;
 	}
 
 
@@ -669,10 +700,7 @@ int  ComportamientoJugador::calcularCoste(const estado &origen, const estado &n_
 }
 
 bool ComparaNodo(const estado &a, const estado &n) {
-	if (a.fila == n.fila and a.columna == n.columna and a.orientacion == n.orientacion)
-		return true;
-	else
-		return false;
+	return (a.fila == n.fila and a.columna == n.columna and a.orientacion == n.orientacion);
 }
 
 
