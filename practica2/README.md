@@ -29,3 +29,8 @@ make
 ```
 ./Belkan
 ```
+
+
+## Ejemplo de ejecución en el nivel 2
+
+![](ejemplo.gif)
