@@ -2,6 +2,10 @@
 
 Esta práctica trata sobre desarrollar un agente reactivo/deliberativo
 
+## Documentación
+
+Hay disponibles dos PDFs con documentación, uno de ellos es un resumen, ajustandose a las 5 páginas que nos piden en la entrega, mientras que el otro explica paso a paso todo el codigo desarrollado.
+
 
 ## Dependencias
 
