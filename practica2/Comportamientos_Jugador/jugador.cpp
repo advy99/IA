@@ -7,7 +7,6 @@
 #include <set>
 #include <stack>
 #include <queue>
-#include <map>
 #include <vector>
 
 using namespace std;
@@ -228,15 +227,19 @@ Action ComportamientoJugador::think(Sensores sensores) {
 			// realizamos una accion, queda una menos para recalcular el plan
 			recalcular--;
 
-			// cuando hemos ejecutado 4 acciones, recalculamos el plan
+			// cuando hemos ejecutado 3 acciones, recalculamos el plan
 			if (recalcular == 0){
 				hayPlan = false;
 
 				// si tenemos mas de la mita de tiempo, recalculamos cada 4 acciones
-				if (sensores.tiempo < 150){
-					recalcular = 4;
+				if (sensores.tiempo < 130){
+					recalcular = 3;
+				} else if (sensores.tiempo < 160){
+					// si nos queda entre 130 y 160 segundos recalculamos
+					// cada 5 acciones
+					recalcular = 5;
 				} else if (sensores.tiempo < 200){
-					// si nos queda entre 150 y 200 segundos recalculamos
+					// si nos queda entre 160 y 200 segundos recalculamos
 					// cada 15 acciones
 					recalcular = 15;
 				} else if (sensores.tiempo < 250) {
@@ -244,7 +247,7 @@ Action ComportamientoJugador::think(Sensores sensores) {
 					recalcular = 40;
 				} else {
 					// si hemos consumido 250 segundos recalculamos cada 80 acciones
-					recalcular = 80;
+					recalcular = 90;
 				}
 			}
 
