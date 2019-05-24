@@ -69,12 +69,13 @@ double Heuristica(const int jugador, const Environment & estado){
 
         for (int j = 0; j < 7; j++){
             if (estado.See_Casilla(i, j) == jugador || estado.See_Casilla(i, j) == jugador+3){
-                casillas_jugador++;
+                casillas_jugador += 2 * casillas_jugador;
             } else if (estado.See_Casilla(i, j) != 0){
-                casillas_oponente++;
+                casillas_oponente += 2 ;
             } else {
                 casillas_vacias++;
             }
+
 
         }
 
