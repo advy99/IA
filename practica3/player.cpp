@@ -57,10 +57,52 @@ double ValoracionTest(const Environment &estado, int jugador){
 // ------------------- Los tres metodos anteriores no se pueden modificar
 
 
+double Heuristica(const int jugador, const Environment & estado){
+    double h = 0;
+
+    int casillas_jugador = 0, casillas_oponente = 0, casillas_vacias = 0;
+
+    for (int i = 0; i < 7; i++){
+        casillas_vacias = 0;
+        casillas_oponente = 0;
+        casillas_jugador = 0;
+
+        for (int j = 0; j < 7; j++){
+            if (estado.See_Casilla(i, j) == jugador || estado.See_Casilla(i, j) == jugador+3){
+                casillas_jugador++;
+            } else if (estado.See_Casilla(i, j) != 0){
+                casillas_oponente++;
+            } else {
+                casillas_vacias++;
+            }
+
+        }
+
+        h -= casillas_jugador;
+        h += casillas_oponente;
+
+
+
+    }
+
+    return h;
+
+}
+
 
 // Funcion heuristica (ESTA ES LA QUE TENEIS QUE MODIFICAR)
 double Valoracion(const Environment &estado, int jugador){
 
+    int ganador = estado.RevisarTablero();
+
+    if (ganador==jugador)
+       return 99999999.0; // Gana el jugador que pide la valoracion
+    else if (ganador!=0)
+            return -99999999.0; // Pierde el jugador que pide la valoracion
+    else if (estado.Get_Casillas_Libres()==0)
+            return 0;  // Hay un empate global y se ha rellenado completamente el tablero
+    else
+        return Heuristica(jugador,estado);
 
 
 }
@@ -151,8 +193,8 @@ Environment::ActionType Player::Think(){
     //--------------------- COMENTAR Hasta aqui
     */
 
-    alpha = -INFINITY;
-    beta = INFINITY;
+    alpha = menosinf;//-INFINITY;
+    beta = masinf;//INFINITY;
 
     //--------------------- AQUI EMPIEZA LA PARTE A REALIZAR POR EL ALUMNO ------------------------------------------------
     if (n_act==0){
@@ -172,17 +214,16 @@ Environment::ActionType Player::Think(){
 
         for (int i = 0; i < n_pos; i++){
 
-            v = Poda_AlfaBeta(acciones[i], jugador_, 0, PROFUNDIDAD_ALFABETA, alpha, beta);
+            v = Poda_AlfaBeta(acciones[i], jugador_, 1, PROFUNDIDAD_ALFABETA-1, alpha, beta);
             cout << acciones[i].Last_Action(jugador_) << " " << v << endl;
 
-            if ( v > valor){
+            if ( v >= valor){
                 accion = static_cast< Environment::ActionType > (acciones[i].Last_Action(jugador_) );
                 valor = v;
             }
 
 
         }
-
 
     }
 
@@ -196,24 +237,6 @@ Environment::ActionType Player::Think(){
 
     return accion;
 }
-/*
-int n_terminales(const Environment &t, int profundidad, int limite){
-    if (t.JuegoTerminado() || profundidad = limite){
-        return 1;
-    }
-
-    Environment v[8];
-
-    int n_hijos = t.GenerateAllMoves(v);
-
-    int suma = 0;
-
-    for (int i = 0; i < n_hijos; i++){
-        suma += n_terminales(v[i], produndidad+1, limite);
-    }
-
-    return suma;
-}*/
 
 
 
@@ -225,7 +248,7 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
 
 
    if (PROFUNDIDAD_ALFABETA == 0 || actual_.JuegoTerminado()){
-      return ValoracionTest(actual_, jugador_);
+      return Valoracion(actual_, jugador_);
    }
 
    Environment acciones[8];
@@ -235,6 +258,7 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
 
    bool hayPoda = false;
    //cout << jugador_ << " " << actual_.JugadorActivo() << endl;
+
    if (!oponente){
       // le toca a nuestro jugador_, buscamos maximizar
 
@@ -248,7 +272,6 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
         }
 
       }
-
       return alfa;
 
    } else{
