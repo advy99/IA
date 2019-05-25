@@ -57,23 +57,52 @@ double ValoracionTest(const Environment &estado, int jugador){
 // ------------------- Los tres metodos anteriores no se pueden modificar
 
 
-double Heuristica(const int jugador, const Environment & estado){
-    double h = 0;
+double ValoracionVertical(const int jugador, const Environment & estado){
+    double h;
 
-    int casillas_jugador = 0, casillas_oponente = 0, casillas_vacias = 0;
+    int casillas_jugador = 0, casillas_oponente = 0;
+    bool seguida_jugador = false;
+    bool seguida_oponente = false;
+    int n_jugador = 1;
+    int n_oponente = 1;
 
     for (int i = 0; i < 7; i++){
-        casillas_vacias = 0;
         casillas_oponente = 0;
         casillas_jugador = 0;
 
+
         for (int j = 0; j < 7; j++){
             if (estado.See_Casilla(i, j) == jugador || estado.See_Casilla(i, j) == jugador+3){
-                casillas_jugador += 2 * casillas_jugador;
+                seguida_oponente = false;
+                n_oponente = 1;
+
+                if (seguida_jugador){
+                    n_jugador++;
+                    casillas_jugador += 4 * n_jugador;
+                } else {
+                    casillas_jugador += 2;
+                }
+
+                seguida_jugador = true;
+
             } else if (estado.See_Casilla(i, j) != 0){
-                casillas_oponente += 2 ;
+                seguida_jugador = false;
+                n_jugador = 1;
+
+                if (seguida_oponente){
+                    n_oponente++;
+                    casillas_oponente += 4 * n_oponente;
+                } else{
+                    casillas_oponente += 2;
+                }
+
+                seguida_oponente = true;
+
             } else {
-                casillas_vacias++;
+                n_oponente = 1;
+                n_jugador = 1;
+                seguida_jugador = false;
+                seguida_oponente = false;
             }
 
 
@@ -85,6 +114,78 @@ double Heuristica(const int jugador, const Environment & estado){
 
 
     }
+
+    return h;
+}
+
+double ValoracionHorizontal(const int jugador, const Environment & estado){
+    double h;
+
+    int casillas_jugador = 0, casillas_oponente = 0;
+    bool seguida_jugador = false;
+    bool seguida_oponente = false;
+    int n_jugador = 1;
+    int n_oponente = 1;
+
+    for (int i = 0; i < 7; i++){
+        casillas_oponente = 0;
+        casillas_jugador = 0;
+
+
+        for (int j = 0; j < 7; j++){
+            if (estado.See_Casilla(j, i) == jugador || estado.See_Casilla(j, i) == jugador+3){
+                seguida_oponente = false;
+                n_oponente = 1;
+
+                if (seguida_jugador){
+                    n_jugador++;
+                    casillas_jugador += 4 * n_jugador;
+                } else {
+                    casillas_jugador += 2;
+                }
+
+                seguida_jugador = true;
+
+            } else if (estado.See_Casilla(j, i) != 0){
+                seguida_jugador = false;
+                n_jugador = 1;
+
+                if (seguida_oponente){
+                    n_oponente++;
+                    casillas_oponente += 4 * n_oponente;
+                } else{
+                    casillas_oponente += 2;
+                }
+
+                seguida_oponente = true;
+
+            } else {
+                n_oponente = 1;
+                n_jugador = 1;
+                seguida_jugador = false;
+                seguida_oponente = false;
+            }
+
+
+        }
+
+        h -= casillas_jugador;
+        h += casillas_oponente;
+
+
+
+    }
+
+    return h;
+}
+
+
+
+double Heuristica(const int jugador, const Environment & estado){
+    double h = 0;
+
+    h += ValoracionVertical(jugador, estado);
+    h += ValoracionHorizontal(jugador, estado);
 
     return h;
 
@@ -216,7 +317,7 @@ Environment::ActionType Player::Think(){
         for (int i = 0; i < n_pos; i++){
 
             v = Poda_AlfaBeta(acciones[i], jugador_, 1, PROFUNDIDAD_ALFABETA-1, alpha, beta);
-            cout << acciones[i].Last_Action(jugador_) << " " << v << endl;
+            cout << "Accion: " << acciones[i].Last_Action(jugador_) << " valor:  " << v << endl;
 
             if ( v >= valor){
                 accion = static_cast< Environment::ActionType > (acciones[i].Last_Action(jugador_) );
