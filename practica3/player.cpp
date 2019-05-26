@@ -57,7 +57,7 @@ double ValoracionTest(const Environment &estado, int jugador){
 // ------------------- Los tres metodos anteriores no se pueden modificar
 
 
-double ValoracionVertical(const int jugador, const Environment & estado){
+double ValoracionHorizontal(const int jugador, const Environment & estado){
     double h;
 
     int casillas_jugador = 0, casillas_oponente = 0;
@@ -118,7 +118,7 @@ double ValoracionVertical(const int jugador, const Environment & estado){
     return h;
 }
 
-double ValoracionHorizontal(const int jugador, const Environment & estado){
+double ValoracionVertical(const int jugador, const Environment & estado){
     double h;
 
     int casillas_jugador = 0, casillas_oponente = 0;
@@ -141,7 +141,7 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 2;
+                    casillas_jugador += 4;
                 }
 
                 seguida_jugador = true;
@@ -154,7 +154,7 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 2;
+                    casillas_oponente += 4;
                 }
 
                 seguida_oponente = true;
@@ -180,12 +180,126 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
 }
 
 
+double ValoracionDiagonal(const int jugador, const Environment & estado){
+    double h;
+
+    int casillas_jugador = 0, casillas_oponente = 0;
+    bool seguida_jugador = false;
+    bool seguida_oponente = false;
+    int n_jugador = 1;
+    int n_oponente = 1;
+
+    for (int i = 3; i > 0; i--){
+        casillas_oponente = 0;
+        casillas_jugador = 0;
+
+
+        for (int j = 0; j < 7 - i; j++){
+            if (estado.See_Casilla(j + i, j) == jugador || estado.See_Casilla(j + i, j) == jugador+3){
+                seguida_oponente = false;
+                n_oponente = 1;
+
+                if (seguida_jugador){
+                    n_jugador++;
+                    casillas_jugador += 4 * n_jugador;
+                } else {
+                    casillas_jugador += 4;
+                }
+
+                seguida_jugador = true;
+
+            } else if (estado.See_Casilla(j + i, j) != 0){
+                seguida_jugador = false;
+                n_jugador = 1;
+
+                if (seguida_oponente){
+                    n_oponente++;
+                    casillas_oponente += 4 * n_oponente;
+                } else{
+                    casillas_oponente += 4;
+                }
+
+                seguida_oponente = true;
+
+            } else {
+                n_oponente = 1;
+                n_jugador = 1;
+                seguida_jugador = false;
+                seguida_oponente = false;
+            }
+
+
+        }
+
+        h -= casillas_jugador;
+        h += casillas_oponente;
+
+    }
+
+
+    for (int i = 3; i > 0; i--){
+        casillas_oponente = 0;
+        casillas_jugador = 0;
+
+
+        for (int j = 0; j < 7 - i; j++){
+            if (estado.See_Casilla(j, j + i) == jugador || estado.See_Casilla(j, j + i) == jugador+3){
+                seguida_oponente = false;
+                n_oponente = 1;
+
+                if (seguida_jugador){
+                    n_jugador++;
+                    casillas_jugador += 4 * n_jugador;
+                } else {
+                    casillas_jugador += 4;
+                }
+
+                seguida_jugador = true;
+
+            } else if (estado.See_Casilla(j, j + i) != 0){
+                seguida_jugador = false;
+                n_jugador = 1;
+
+                if (seguida_oponente){
+                    n_oponente++;
+                    casillas_oponente += 4 * n_oponente;
+                } else{
+                    casillas_oponente += 4;
+                }
+
+                seguida_oponente = true;
+
+            } else {
+                n_oponente = 1;
+                n_jugador = 1;
+                seguida_jugador = false;
+                seguida_oponente = false;
+            }
+
+
+        }
+
+
+        h -= casillas_jugador;
+        h += casillas_oponente;
+
+    }
+
+
+
+
+    return h;
+}
+
+
+
 
 double Heuristica(const int jugador, const Environment & estado){
     double h = 0;
 
     h += ValoracionVertical(jugador, estado);
     h += ValoracionHorizontal(jugador, estado);
+    h += ValoracionDiagonal(jugador, estado);
 
     return h;
 
