@@ -189,61 +189,114 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
     int n_jugador = 1;
     int n_oponente = 1;
 
-    for (int i = 3; i > 0; i--){
-        casillas_oponente = 0;
-        casillas_jugador = 0;
+
+    int casillas_jugador_d2 = 0, casillas_oponente_d2 = 0;
+    bool seguida_jugador_d2 = false;
+    bool seguida_oponente_d2 = false;
+    int n_jugador_d2 = 1;
+    int n_oponente_d2 = 1;
 
 
-        for (int j = 0; j < 7 - i; j++){
-            if (estado.See_Casilla(j + i, j) == jugador || estado.See_Casilla(j + i, j) == jugador+3){
-                seguida_oponente = false;
-                n_oponente = 1;
+    casillas_oponente = 0;
+    casillas_jugador = 0;
 
-                if (seguida_jugador){
-                    n_jugador++;
-                    casillas_jugador += 4 * n_jugador;
-                } else {
-                    casillas_jugador += 4;
-                }
+    casillas_oponente_d2 = 0;
+    casillas_jugador_d2 = 0;
 
-                seguida_jugador = true;
 
-            } else if (estado.See_Casilla(j + i, j) != 0){
-                seguida_jugador = false;
-                n_jugador = 1;
+    for (int i = 0; i < 7; i++){
 
-                if (seguida_oponente){
-                    n_oponente++;
-                    casillas_oponente += 4 * n_oponente;
-                } else{
-                    casillas_oponente += 4;
-                }
 
-                seguida_oponente = true;
+        if (estado.See_Casilla(i, i) == jugador || estado.See_Casilla(i, i) == jugador+3){
+            seguida_oponente = false;
+            n_oponente = 1;
 
+            if (seguida_jugador){
+                n_jugador++;
+                casillas_jugador += 4 * n_jugador;
             } else {
-                n_oponente = 1;
-                n_jugador = 1;
-                seguida_jugador = false;
-                seguida_oponente = false;
+                casillas_jugador += 4;
             }
 
+            seguida_jugador = true;
 
+        } else if (estado.See_Casilla(i, i) != 0){
+            seguida_jugador = false;
+            n_jugador = 1;
+
+            if (seguida_oponente){
+                n_oponente++;
+                casillas_oponente += 4 * n_oponente;
+            } else{
+                casillas_oponente += 4;
+            }
+
+            seguida_oponente = true;
+
+        } else {
+            n_oponente = 1;
+            n_jugador = 1;
+            seguida_jugador = false;
+            seguida_oponente = false;
+        }
+
+
+
+
+
+        if (estado.See_Casilla(6-i, 6-i) == jugador || estado.See_Casilla(6-i, 6-i) == jugador+3){
+            seguida_oponente_d2 = false;
+            n_oponente_d2 = 1;
+
+            if (seguida_jugador_d2){
+                n_jugador_d2++;
+                casillas_jugador_d2 += 4 * n_jugador_d2;
+            } else {
+                casillas_jugador_d2 += 4;
+            }
+
+            seguida_jugador_d2 = true;
+
+        } else if (estado.See_Casilla(6-i, 6-i) != 0){
+            seguida_jugador_d2 = false;
+            n_jugador_d2 = 1;
+
+            if (seguida_oponente_d2){
+                n_oponente_d2++;
+                casillas_oponente_d2 += 4 * n_oponente_d2;
+            } else{
+                casillas_oponente_d2 += 4;
+            }
+
+            seguida_oponente_d2 = true;
+
+        } else {
+            n_oponente_d2 = 1;
+            n_jugador_d2 = 1;
+            seguida_jugador_d2 = false;
+            seguida_oponente_d2 = false;
         }
 
         h -= casillas_jugador;
         h += casillas_oponente;
+
+
+        h -= casillas_jugador_d2;
+        h += casillas_oponente_d2;
 
     }
 
 
-    for (int i = 3; i > 0; i--){
+    for (int i = 1; i < 4; i++){
         casillas_oponente = 0;
         casillas_jugador = 0;
 
+        casillas_oponente_d2 = 0;
+        casillas_jugador_d2 = 0;
+
 
         for (int j = 0; j < 7 - i; j++){
-            if (estado.See_Casilla(j, j + i) == jugador || estado.See_Casilla(j, j + i) == jugador+3){
+            if (estado.See_Casilla(i + j, j) == jugador || estado.See_Casilla(i + j, j) == jugador+3){
                 seguida_oponente = false;
                 n_oponente = 1;
 
@@ -256,7 +309,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
                 seguida_jugador = true;
 
-            } else if (estado.See_Casilla(j, j + i) != 0){
+            } else if (estado.See_Casilla(i + j, j) != 0){
                 seguida_jugador = false;
                 n_jugador = 1;
 
@@ -277,11 +330,146 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
             }
 
 
-        }
 
+
+
+            if (estado.See_Casilla(j, i + j) == jugador || estado.See_Casilla(j, i + j) == jugador+3){
+                seguida_oponente_d2 = false;
+                n_oponente_d2 = 1;
+
+                if (seguida_jugador_d2){
+                    n_jugador_d2++;
+                    casillas_jugador_d2 += 4 * n_jugador_d2;
+                } else {
+                    casillas_jugador_d2 += 4;
+                }
+
+                seguida_jugador_d2 = true;
+
+            } else if (estado.See_Casilla(j, i + j) != 0){
+                seguida_jugador_d2 = false;
+                n_jugador_d2 = 1;
+
+                if (seguida_oponente_d2){
+                    n_oponente_d2++;
+                    casillas_oponente_d2 += 4 * n_oponente_d2;
+                } else{
+                    casillas_oponente_d2 += 4;
+                }
+
+                seguida_oponente_d2 = true;
+
+            } else {
+                n_oponente_d2 = 1;
+                n_jugador_d2 = 1;
+                seguida_jugador_d2 = false;
+                seguida_oponente_d2 = false;
+            }
+
+
+        }
 
         h -= casillas_jugador;
         h += casillas_oponente;
+
+
+        h -= casillas_jugador_d2;
+        h += casillas_oponente_d2;
+
+    }
+
+
+
+
+
+    for (int i = 1; i < 4; i++){
+        casillas_oponente = 0;
+        casillas_jugador = 0;
+
+        casillas_oponente_d2 = 0;
+        casillas_jugador_d2 = 0;
+
+
+        for (int j = 0; j < 7 - i; j++){
+            if (estado.See_Casilla( 6 - i - j, 6 - j) == jugador || estado.See_Casilla( 6 - i - j, 6 - j) == jugador+3){
+                seguida_oponente = false;
+                n_oponente = 1;
+
+                if (seguida_jugador){
+                    n_jugador++;
+                    casillas_jugador += 4 * n_jugador;
+                } else {
+                    casillas_jugador += 4;
+                }
+
+                seguida_jugador = true;
+
+            } else if (estado.See_Casilla(6 - i - j, 6 - j) != 0){
+                seguida_jugador = false;
+                n_jugador = 1;
+
+                if (seguida_oponente){
+                    n_oponente++;
+                    casillas_oponente += 4 * n_oponente;
+                } else{
+                    casillas_oponente += 4;
+                }
+
+                seguida_oponente = true;
+
+            } else {
+                n_oponente = 1;
+                n_jugador = 1;
+                seguida_jugador = false;
+                seguida_oponente = false;
+            }
+
+
+
+
+
+            if (estado.See_Casilla( 6 - j, 6 - i - j) == jugador || estado.See_Casilla(6 - j, 6 - i - j) == jugador+3){
+                seguida_oponente_d2 = false;
+                n_oponente_d2 = 1;
+
+                if (seguida_jugador_d2){
+                    n_jugador_d2++;
+                    casillas_jugador_d2 += 4 * n_jugador_d2;
+                } else {
+                    casillas_jugador_d2 += 4;
+                }
+
+                seguida_jugador_d2 = true;
+
+            } else if (estado.See_Casilla(6 - j, 6 - i - j) != 0){
+                seguida_jugador_d2 = false;
+                n_jugador_d2 = 1;
+
+                if (seguida_oponente_d2){
+                    n_oponente_d2++;
+                    casillas_oponente_d2 += 4 * n_oponente_d2;
+                } else{
+                    casillas_oponente_d2 += 4;
+                }
+
+                seguida_oponente_d2 = true;
+
+            } else {
+                n_oponente_d2 = 1;
+                n_jugador_d2 = 1;
+                seguida_jugador_d2 = false;
+                seguida_oponente_d2 = false;
+            }
+
+
+        }
+
+        h -= casillas_jugador;
+        h += casillas_oponente;
+
+
+        h -= casillas_jugador_d2;
+        h += casillas_oponente_d2;
 
     }
 
