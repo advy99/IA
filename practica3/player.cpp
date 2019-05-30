@@ -60,27 +60,37 @@ double ValoracionTest(const Environment &estado, int jugador){
 double ValoracionHorizontal(const int jugador, const Environment & estado){
     double h;
 
+    // contaremos cuantas casillas del jugador y del oponente hay
     int casillas_jugador = 0, casillas_oponente = 0;
+
+    // comprobaremos si la casilla justo anterior es del mismo jugador
     bool seguida_jugador = false;
     bool seguida_oponente = false;
+
+    // contamos cuantas casillas seguidas tiene cada uno
     int n_jugador = 1;
     int n_oponente = 1;
 
+    // recorremos el tablero
     for (int i = 0; i < 7; i++){
+       // en principio, en esa fila no hay fichas
         casillas_oponente = 0;
         casillas_jugador = 0;
 
-
+        // recorremos la fila
         for (int j = 0; j < 7; j++){
+            // si en la i,j hay una ficha del jugador (normal o bomba)
             if (estado.See_Casilla(i, j) == jugador || estado.See_Casilla(i, j) == jugador+3){
+               // el oponente no tiene fichas seguidas
                 seguida_oponente = false;
                 n_oponente = 1;
 
+                // si el jugador es
                 if (seguida_jugador){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 2;
+                    casillas_jugador += 4;
                 }
 
                 seguida_jugador = true;
@@ -93,7 +103,7 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 2;
+                    casillas_oponente += 4;
                 }
 
                 seguida_oponente = true;
@@ -482,11 +492,14 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
 
 
-double Heuristica(const int jugador, const Environment & estado){
+double F_Valoracion(const int jugador, const Environment & estado){
     double h = 0;
 
+    // valoramos el estado comprobando las piezas en vertical
     h += ValoracionVertical(jugador, estado);
+    // valoramos el estado comprobando las piezas en horizontal
     h += ValoracionHorizontal(jugador, estado);
+    // valoramos el estado comprobando las piezas en diagonal
     h += ValoracionDiagonal(jugador, estado);
 
     return h;
@@ -497,6 +510,7 @@ double Heuristica(const int jugador, const Environment & estado){
 // Funcion heuristica (ESTA ES LA QUE TENEIS QUE MODIFICAR)
 double Valoracion(const Environment &estado, int jugador){
 
+    // comprobamos si en el estado dado gana algun jugador
     int ganador = estado.RevisarTablero();
 
     if (ganador==jugador)
@@ -506,7 +520,7 @@ double Valoracion(const Environment &estado, int jugador){
     else if (estado.Get_Casillas_Libres()==0)
             return 0;  // Hay un empate global y se ha rellenado completamente el tablero
     else
-        return Heuristica(jugador,estado);
+        return F_Valoracion(jugador,estado);// valoramos el estado para ver como de bueno es
 
 
 }
@@ -597,10 +611,15 @@ Environment::ActionType Player::Think(){
     //--------------------- COMENTAR Hasta aqui
     */
 
+
+
+    //--------------------- AQUI EMPIEZA LA PARTE A REALIZAR POR EL ALUMNO ------------------------------------------------
+
+    // establecemos alpha y beta a menos infinito e infinito respectivamente
     alpha = menosinf;//-INFINITY;
     beta = masinf;//INFINITY;
 
-    //--------------------- AQUI EMPIEZA LA PARTE A REALIZAR POR EL ALUMNO ------------------------------------------------
+    // si no podemos jugar, avisamos de empate
     if (n_act==0){
       (jugador_==1) ? cout << "Verde: " : cout << "Azul: ";
       cout << " No puede realizar ninguna accion!!!\n";
@@ -609,23 +628,33 @@ Environment::ActionType Player::Think(){
     }
     else{
 
+       // si podemos jugar, generamos los 8 primeros hijos como jugador
         Environment acciones[8];
-
         int n_pos = actual_.GenerateAllMoves(acciones);
+
+        // establecemos el valor de la accion a menos infinito y declaramos
+        // una variable auxiliar v que almacenara el valor de cada hijo del
+        // estado actual
         double v;
         valor = -INFINITY;
 
 
+
+        // para todos los hijos
         for (int i = 0; i < n_pos; i++){
 
+            // almacenamos el valor de realizar la poda, como ya hemos generado
+            // el nivel del jugador, ahora le toca al oponente jugar, como vemos
+            // en el tercer parametro
             v = Poda_AlfaBeta(acciones[i], jugador_, 1, PROFUNDIDAD_ALFABETA-1, alpha, beta);
             cout << "Accion: " << acciones[i].Last_Action(jugador_) << " valor:  " << v << endl;
 
-            if ( v >= valor){
+            // si el resultado de acciones[i] lleva a una mejor situacion
+            // cambiamos el valor y la accion a realizar
+            if ( v > valor || (v == 99999999.0 && acciones[i].Last_Action(jugador_) == 7) ){
                 accion = static_cast< Environment::ActionType > (acciones[i].Last_Action(jugador_) );
                 valor = v;
             }
-
 
         }
 
@@ -650,47 +679,60 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
 
 
 
-
+   // si llegamos a un nodo terminal, o al limite de profundidad
+   // devolvemos el valor de ese estado
    if (PROFUNDIDAD_ALFABETA == 0 || actual_.JuegoTerminado()){
       return Valoracion(actual_, jugador_);
    }
+   // si no, pasamos a generar sus hijos
 
    Environment acciones[8];
 
    int n_act = actual_.GenerateAllMoves(acciones);
 
 
-   bool hayPoda = false;
-   //cout << jugador_ << " " << actual_.JugadorActivo() << endl;
-
+   // si le toca a nuestro jugador, estamos en un nodo MAX
    if (!oponente){
-      // le toca a nuestro jugador_, buscamos maximizar
 
+      // para todos los hijos, modificamos alfa si es mayor del que ya tenemos
+      for(int i = 0; i < n_act; i++){
 
-      for(int i = 0; i < n_act && !hayPoda; i++){
-
+         // como en este nodo juega el jugador, en el siguiente juega el contrario
+         // por eso pasamos !oponente, ya que en este oponente = false
         alfa = max(alfa, Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, alfa, beta ));
 
+        // si en algun momento alfa supera a beta, quiere decir que ya hemos
+        // encontrado el mejor valor para estos hijos, y podemos parar de
+        //explorar
         if (alfa >= beta){
-            hayPoda = true;
+           return beta;
         }
 
       }
+
+      //como estamos en un nodo MAX, devolvemos el valor de alfa;
       return alfa;
 
    } else{
-      // le toca al oponente, buscamos minimizar
+      // le toca al oponente, estamos en un nodo MIN
 
-      for(int i = 0; i < n_act && !hayPoda; i++){
+      // para todos los hijos, modificamos beta si es menor del que ya tenemos
+      for(int i = 0; i < n_act; i++){
 
+         // como en este nodo juega el oponente, en el siguiente juega el jugador
+         // por eso pasamos !oponente, ya que en este oponente = true
         beta = min(beta, Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, alfa, beta ));
 
+        // si en algun momento alfa supera a beta, quiere decir que ya hemos
+        // encontrado el mejor valor para estos hijos, y podemos parar de
+        //explorar
         if (alfa >= beta){
-            hayPoda = true;
+           return alfa;
         }
 
       }
 
+      // como estamos en un nodo MIN, devolvemos el valor de beta
       return beta;
 
    }
