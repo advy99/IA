@@ -11,9 +11,11 @@ class Player{
     private:
       int jugador_;
       Environment actual_;
+      const int PROFUNDIDAD_ALFABETA_ = 8;
 
       double Poda_AlfaBeta(const Environment & actual_, int jugador_, const bool ,\
                         const int PROFUNDIDAD_ALFABETA, \
+                        Environment::ActionType & accion, \
                         double alpha, double beta);
 
 };

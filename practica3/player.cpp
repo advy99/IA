@@ -85,17 +85,23 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
                 seguida_oponente = false;
                 n_oponente = 1;
 
-                // si el jugador es
+                // si el jugador tiene ficha seguida, aumentamos el numero
+                // de fichas seguidas, y sumamos 4 * el numero de fichas al valor del jugador
                 if (seguida_jugador){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 4;
+                   // si no hay ficha seguida, sumamos 2, en lugar de 4, ya que
+                   // no consideramos tan malo una unica ficha
+                    casillas_jugador += 2;
                 }
 
+                // ahora el jugador tiene ficha seguida
                 seguida_jugador = true;
 
             } else if (estado.See_Casilla(i, j) != 0){
+                // si la ficha es del oponente, realizamos lo mismo, solo que
+                // con los valores del oponente
                 seguida_jugador = false;
                 n_jugador = 1;
 
@@ -103,12 +109,13 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 4;
+                    casillas_oponente += 2;
                 }
 
                 seguida_oponente = true;
 
             } else {
+               // si no hay ficha, actualizamos los valores iniciales
                 n_oponente = 1;
                 n_jugador = 1;
                 seguida_jugador = false;
@@ -118,7 +125,11 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
 
         }
 
+        // que el jugador tenga fichas en las casillas, es malo para el jugador
+        // por eso restamos
         h -= casillas_jugador;
+
+        // que el oponente tenga fichas es bueno para el jugador, por eso sumamos
         h += casillas_oponente;
 
 
@@ -129,6 +140,10 @@ double ValoracionHorizontal(const int jugador, const Environment & estado){
 }
 
 double ValoracionVertical(const int jugador, const Environment & estado){
+
+    // Aplicamos la misma técnica, pero en lugar de recorrer la matriz
+    // de forma horizontal la recorremos de forma vertical
+
     double h;
 
     int casillas_jugador = 0, casillas_oponente = 0;
@@ -151,7 +166,7 @@ double ValoracionVertical(const int jugador, const Environment & estado){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 4;
+                    casillas_jugador += 2;
                 }
 
                 seguida_jugador = true;
@@ -164,7 +179,7 @@ double ValoracionVertical(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 4;
+                    casillas_oponente += 2;
                 }
 
                 seguida_oponente = true;
@@ -191,6 +206,8 @@ double ValoracionVertical(const int jugador, const Environment & estado){
 
 
 double ValoracionDiagonal(const int jugador, const Environment & estado){
+
+   // volvemos a aplicar la misa tecnica, solo que recorriendo las diagonales
     double h;
 
     int casillas_jugador = 0, casillas_oponente = 0;
@@ -199,6 +216,9 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
     int n_jugador = 1;
     int n_oponente = 1;
 
+
+    // duplicamos las variables, ya que las recorremos en "espejo"
+    // para hacer todas las partes de las diagonales a la  vez
 
     int casillas_jugador_d2 = 0, casillas_oponente_d2 = 0;
     bool seguida_jugador_d2 = false;
@@ -213,10 +233,11 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
     casillas_oponente_d2 = 0;
     casillas_jugador_d2 = 0;
 
+    // recorremos las diagonales principales
 
     for (int i = 0; i < 7; i++){
 
-
+       // diagonal principal de izquierda a derecha
         if (estado.See_Casilla(i, i) == jugador || estado.See_Casilla(i, i) == jugador+3){
             seguida_oponente = false;
             n_oponente = 1;
@@ -225,7 +246,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                 n_jugador++;
                 casillas_jugador += 4 * n_jugador;
             } else {
-                casillas_jugador += 4;
+                casillas_jugador += 2;
             }
 
             seguida_jugador = true;
@@ -238,7 +259,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                 n_oponente++;
                 casillas_oponente += 4 * n_oponente;
             } else{
-                casillas_oponente += 4;
+                casillas_oponente += 2;
             }
 
             seguida_oponente = true;
@@ -252,7 +273,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
 
 
-
+        // diagonal principal de derecha a izquierda
 
         if (estado.See_Casilla(6-i, 6-i) == jugador || estado.See_Casilla(6-i, 6-i) == jugador+3){
             seguida_oponente_d2 = false;
@@ -262,7 +283,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                 n_jugador_d2++;
                 casillas_jugador_d2 += 4 * n_jugador_d2;
             } else {
-                casillas_jugador_d2 += 4;
+                casillas_jugador_d2 += 2;
             }
 
             seguida_jugador_d2 = true;
@@ -275,7 +296,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                 n_oponente_d2++;
                 casillas_oponente_d2 += 4 * n_oponente_d2;
             } else{
-                casillas_oponente_d2 += 4;
+                casillas_oponente_d2 += 2;
             }
 
             seguida_oponente_d2 = true;
@@ -297,6 +318,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
     }
 
 
+    // diagonal de izquierda a derecha
     for (int i = 1; i < 4; i++){
         casillas_oponente = 0;
         casillas_jugador = 0;
@@ -306,6 +328,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
 
         for (int j = 0; j < 7 - i; j++){
+           // parte inferior de la diagonal principal
             if (estado.See_Casilla(i + j, j) == jugador || estado.See_Casilla(i + j, j) == jugador+3){
                 seguida_oponente = false;
                 n_oponente = 1;
@@ -314,7 +337,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 4;
+                    casillas_jugador += 2;
                 }
 
                 seguida_jugador = true;
@@ -327,7 +350,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 4;
+                    casillas_oponente += 2;
                 }
 
                 seguida_oponente = true;
@@ -341,7 +364,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
 
 
-
+            // parte superior de la diagonal principal
 
             if (estado.See_Casilla(j, i + j) == jugador || estado.See_Casilla(j, i + j) == jugador+3){
                 seguida_oponente_d2 = false;
@@ -351,7 +374,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_jugador_d2++;
                     casillas_jugador_d2 += 4 * n_jugador_d2;
                 } else {
-                    casillas_jugador_d2 += 4;
+                    casillas_jugador_d2 += 2;
                 }
 
                 seguida_jugador_d2 = true;
@@ -364,7 +387,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_oponente_d2++;
                     casillas_oponente_d2 += 4 * n_oponente_d2;
                 } else{
-                    casillas_oponente_d2 += 4;
+                    casillas_oponente_d2 += 2;
                 }
 
                 seguida_oponente_d2 = true;
@@ -391,7 +414,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
 
 
 
-
+    // diagonal de derecha a izquierda
     for (int i = 1; i < 4; i++){
         casillas_oponente = 0;
         casillas_jugador = 0;
@@ -409,7 +432,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_jugador++;
                     casillas_jugador += 4 * n_jugador;
                 } else {
-                    casillas_jugador += 4;
+                    casillas_jugador += 2;
                 }
 
                 seguida_jugador = true;
@@ -422,7 +445,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_oponente++;
                     casillas_oponente += 4 * n_oponente;
                 } else{
-                    casillas_oponente += 4;
+                    casillas_oponente += 2;
                 }
 
                 seguida_oponente = true;
@@ -446,7 +469,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_jugador_d2++;
                     casillas_jugador_d2 += 4 * n_jugador_d2;
                 } else {
-                    casillas_jugador_d2 += 4;
+                    casillas_jugador_d2 += 2;
                 }
 
                 seguida_jugador_d2 = true;
@@ -459,7 +482,7 @@ double ValoracionDiagonal(const int jugador, const Environment & estado){
                     n_oponente_d2++;
                     casillas_oponente_d2 += 4 * n_oponente_d2;
                 } else{
-                    casillas_oponente_d2 += 4;
+                    casillas_oponente_d2 += 2;
                 }
 
                 seguida_oponente_d2 = true;
@@ -508,13 +531,14 @@ double F_Valoracion(const int jugador, const Environment & estado){
 
 
 // Funcion heuristica (ESTA ES LA QUE TENEIS QUE MODIFICAR)
-double Valoracion(const Environment &estado, int jugador){
+double Valoracion(const Environment &estado, int jugador, int profundidad){
 
     // comprobamos si en el estado dado gana algun jugador
     int ganador = estado.RevisarTablero();
 
     if (ganador==jugador)
-       return 99999999.0; // Gana el jugador que pide la valoracion
+       //return 99999999.0; // Gana el jugador que pide la valoracion
+       return 98999999.0 + (1000.0 * profundidad);
     else if (ganador!=0)
             return -99999999.0; // Pierde el jugador que pide la valoracion
     else if (estado.Get_Casillas_Libres()==0)
@@ -549,8 +573,9 @@ void JuegoAleatorio(bool aplicables[], int opciones[], int &j){
 
 // Invoca el siguiente movimiento del jugador
 Environment::ActionType Player::Think(){
-    const int PROFUNDIDAD_MINIMAX = 6;  // Umbral maximo de profundidad para el metodo MiniMax
-    const int PROFUNDIDAD_ALFABETA = 8; // Umbral maximo de profundidad para la poda Alfa_Beta
+   // usaremos la profundidad declarada en el jugador,para coherencia con la funcion Poda_AlfaBeta
+    //const int PROFUNDIDAD_MINIMAX = 6;  // Umbral maximo de profundidad para el metodo MiniMax
+    //const int PROFUNDIDAD_ALFABETA = 8; // Umbral maximo de profundidad para la poda Alfa_Beta
 
     Environment::ActionType accion; // acci�n que se va a devolver
     bool aplicables[8]; // Vector bool usado para obtener las acciones que son aplicables en el estado actual. La interpretacion es
@@ -627,41 +652,10 @@ Environment::ActionType Player::Think(){
       valor = 0;
     }
     else{
-
-       // si podemos jugar, generamos los 8 primeros hijos como jugador
-        Environment acciones[8];
-        int n_pos = actual_.GenerateAllMoves(acciones);
-
-        // establecemos el valor de la accion a menos infinito y declaramos
-        // una variable auxiliar v que almacenara el valor de cada hijo del
-        // estado actual
-        double v;
-        valor = -INFINITY;
-
-
-
-        // para todos los hijos
-        for (int i = 0; i < n_pos; i++){
-
-            // almacenamos el valor de realizar la poda, como ya hemos generado
-            // el nivel del jugador, ahora le toca al oponente jugar, como vemos
-            // en el tercer parametro
-            v = Poda_AlfaBeta(acciones[i], jugador_, 1, PROFUNDIDAD_ALFABETA-1, alpha, beta);
-            cout << "Accion: " << acciones[i].Last_Action(jugador_) << " valor:  " << v << endl;
-
-            // si el resultado de acciones[i] lleva a una mejor situacion
-            // cambiamos el valor y la accion a realizar
-            if ( v > valor || (v == 99999999.0 && acciones[i].Last_Action(jugador_) == 7) ){
-                accion = static_cast< Environment::ActionType > (acciones[i].Last_Action(jugador_) );
-                valor = v;
-            }
-
-        }
-
+      // calculamos el mejor valor de la poda
+      valor = Poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA_, accion, alpha, beta);
     }
 
-
-    //valor = Poda_AlfaBeta(actual_, jugador_, 0, PROFUNDIDAD_ALFABETA, accion, alpha, beta);
 
     // Opcion: Poda AlfaBeta
     // NOTA: La parametrizacion es solo orientativa
@@ -675,6 +669,7 @@ Environment::ActionType Player::Think(){
 
 double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bool oponente,
                   const int PROFUNDIDAD_ALFABETA,
+                  Environment::ActionType & accion,
                   double alfa, double beta){
 
 
@@ -682,7 +677,7 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
    // si llegamos a un nodo terminal, o al limite de profundidad
    // devolvemos el valor de ese estado
    if (PROFUNDIDAD_ALFABETA == 0 || actual_.JuegoTerminado()){
-      return Valoracion(actual_, jugador_);
+      return Valoracion(actual_, jugador_, PROFUNDIDAD_ALFABETA);
    }
    // si no, pasamos a generar sus hijos
 
@@ -690,16 +685,33 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
 
    int n_act = actual_.GenerateAllMoves(acciones);
 
+   double v;
 
    // si le toca a nuestro jugador, estamos en un nodo MAX
    if (!oponente){
 
-      // para todos los hijos, modificamos alfa si es mayor del que ya tenemos
+      // para todos los hijos, modificamos alfa ya que estamos en un nodo max
       for(int i = 0; i < n_act; i++){
 
          // como en este nodo juega el jugador, en el siguiente juega el contrario
          // por eso pasamos !oponente, ya que en este oponente = false
-        alfa = max(alfa, Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, alfa, beta ));
+        v = Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, accion, alfa, beta );
+
+        // si estamos en la raiz, mostramos la accion a realizar y el valor que obtenemos
+        if (PROFUNDIDAD_ALFABETA == Player::PROFUNDIDAD_ALFABETA_){
+          cout << "Accion " << acciones[i].ActionStr( static_cast< Environment::ActionType >(acciones[i].Last_Action(jugador_)) ) << " valor " << v << endl;
+        }
+        // si el nuevo valor es mayor que alfa, actualizamos alfa
+        if (v > alfa){
+           alfa = v;
+
+           // si estamos en el nodo raiz y hemos actualizado alfa quiere decir
+           // que hemos encontrado un mejor camino a traves de la accion i
+           // luego actualizamos la accion
+           if (PROFUNDIDAD_ALFABETA == Player::PROFUNDIDAD_ALFABETA_){
+             accion = static_cast< Environment::ActionType > (acciones[i].Last_Action(jugador_) );
+          }
+        }
 
         // si en algun momento alfa supera a beta, quiere decir que ya hemos
         // encontrado el mejor valor para estos hijos, y podemos parar de
@@ -707,26 +719,23 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
         if (alfa >= beta){
            return beta;
         }
-
       }
-
       //como estamos en un nodo MAX, devolvemos el valor de alfa;
       return alfa;
 
    } else{
       // le toca al oponente, estamos en un nodo MIN
-
       // para todos los hijos, modificamos beta si es menor del que ya tenemos
       for(int i = 0; i < n_act; i++){
 
          // como en este nodo juega el oponente, en el siguiente juega el jugador
          // por eso pasamos !oponente, ya que en este oponente = true
-        beta = min(beta, Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, alfa, beta ));
+        beta = min(beta, Poda_AlfaBeta(acciones[i], jugador_, !oponente, PROFUNDIDAD_ALFABETA-1, accion, alfa, beta ));
 
         // si en algun momento alfa supera a beta, quiere decir que ya hemos
         // encontrado el mejor valor para estos hijos, y podemos parar de
         //explorar
-        if (alfa >= beta){
+        if (beta <= alfa ){
            return alfa;
         }
 
@@ -734,9 +743,5 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
 
       // como estamos en un nodo MIN, devolvemos el valor de beta
       return beta;
-
    }
-
-
-
 }
