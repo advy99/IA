@@ -537,10 +537,15 @@ double Valoracion(const Environment &estado, int jugador, int profundidad){
     int ganador = estado.RevisarTablero();
 
     if (ganador==jugador)
-       //return 99999999.0; // Gana el jugador que pide la valoracion
+       // si la profundidad = 0 es que necesita realizar muchas acciones
+      // para ganar, asi que preferimos otro estado a otro en el que gane
+      // en menos jugadas
        return 98999999.0 + (1000.0 * profundidad);
     else if (ganador!=0)
-            return -99999999.0; // Pierde el jugador que pide la valoracion
+            // si la profundidad = 0 es que necesita realizar muchas acciones
+            // para perder, asi que preferimos ese estado a otro en el que pierda
+            // en una jugada
+            return -98999999.0 - (1000.0 * profundidad);
     else if (estado.Get_Casillas_Libres()==0)
             return 0;  // Hay un empate global y se ha rellenado completamente el tablero
     else
@@ -671,8 +676,6 @@ double Player::Poda_AlfaBeta(const Environment & actual_, int jugador_, const bo
                   const int PROFUNDIDAD_ALFABETA,
                   Environment::ActionType & accion,
                   double alfa, double beta){
-
-
 
    // si llegamos a un nodo terminal, o al limite de profundidad
    // devolvemos el valor de ese estado
