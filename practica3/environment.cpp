@@ -74,6 +74,7 @@ Environment::Environment(const Environment &env){
     for (int i=0; i<3; i++)
         explosion[i]=env.explosion[i];
     n_jugada = env.n_jugada;
+    n_veces = env.n_veces;
 
 }
 // -----------------------------------------------------------
@@ -111,7 +112,7 @@ Environment& Environment::operator=(const Environment& env)
     for (int i=0; i<3; i++)
         explosion[i]=env.explosion[i];
     n_jugada = env.n_jugada;
-
+    n_veces = env.n_veces;
 }
 // -----------------------------------------------------------
 void Environment::ModificarTablero(const char *origen){
