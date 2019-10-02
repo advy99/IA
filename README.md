@@ -1,6 +1,6 @@
 # IA
 
-Prácticas de Inteligencia Artificial de la UGR.
+Prácticas de Inteligencia Artificial de la UGR del curso 2018/19.
 
 
 # Calificaciones:
